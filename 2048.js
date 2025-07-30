@@ -49,6 +49,38 @@ class Game2048 {
         return this.gameOver;
     }
     
+    checkGameOver() {
+        // Check if there are any empty cells
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 4; j++) {
+                if (this.grid[i][j] === 0) {
+                    return false; // Game not over, empty cell found
+                }
+            }
+        }
+        
+        // Check if any moves are possible (adjacent tiles can merge)
+        for (var i = 0; i < 4; i++) {
+            for (var j = 0; j < 4; j++) {
+                var current = this.grid[i][j];
+                
+                // Check right neighbor
+                if (j < 3 && current === this.grid[i][j + 1]) {
+                    return false; // Can merge with right neighbor
+                }
+                
+                // Check bottom neighbor
+                if (i < 3 && current === this.grid[i + 1][j]) {
+                    return false; // Can merge with bottom neighbor
+                }
+            }
+        }
+        
+        // No empty cells and no possible merges
+        this.gameOver = true;
+        return true;
+    }
+    
     // Movement methods
     moveLeft() {
         var moved = false;
@@ -292,12 +324,16 @@ class Game2048Controller {
     constructor() {
         this.game = new Game2048();
         this.renderer = new Game2048Renderer(document.getElementById('game'));
+        this.gameOverOverlay = document.getElementById('gameOverOverlay');
+        this.finalScoreElement = document.getElementById('finalScore');
+        this.restartButton = document.getElementById('restartButton');
         
         // Initial render
         this.renderer.render(this.game.getGrid());
         
         // Set up event listeners
         this.setupEventListeners();
+        this.setupRestartButton();
     }
     
     setupEventListeners() {
@@ -308,24 +344,28 @@ class Game2048Controller {
                     event.preventDefault();
                     if (this.game.moveUp()) {
                         this.renderer.render(this.game.getGrid());
+                        this.checkGameOver();
                     }
                     break;
                 case 'ArrowDown':
                     event.preventDefault();
                     if (this.game.moveDown()) {
                         this.renderer.render(this.game.getGrid());
+                        this.checkGameOver();
                     }
                     break;
                 case 'ArrowLeft':
                     event.preventDefault();
                     if (this.game.moveLeft()) {
                         this.renderer.render(this.game.getGrid());
+                        this.checkGameOver();
                     }
                     break;
                 case 'ArrowRight':
                     event.preventDefault();
                     if (this.game.moveRight()) {
                         this.renderer.render(this.game.getGrid());
+                        this.checkGameOver();
                     }
                     break;
             }
@@ -352,20 +392,24 @@ class Game2048Controller {
                 if (diffX > 0) {
                     if (this.game.moveLeft()) {
                         this.renderer.render(this.game.getGrid());
+                        this.checkGameOver();
                     }
                 } else {
                     if (this.game.moveRight()) {
                         this.renderer.render(this.game.getGrid());
+                        this.checkGameOver();
                     }
                 }
             } else {
                 if (diffY > 0) {
                     if (this.game.moveUp()) {
                         this.renderer.render(this.game.getGrid());
+                        this.checkGameOver();
                     }
                 } else {
                     if (this.game.moveDown()) {
                         this.renderer.render(this.game.getGrid());
+                        this.checkGameOver();
                     }
                 }
             }
@@ -373,6 +417,38 @@ class Game2048Controller {
             startX = null;
             startY = null;
         });
+    }
+    
+    checkGameOver() {
+        if (this.game.checkGameOver()) {
+            this.showGameOverOverlay();
+        }
+    }
+    
+    showGameOverOverlay() {
+        this.finalScoreElement.textContent = `Final Score: ${this.game.getScore()}`;
+        this.gameOverOverlay.style.display = 'flex';
+    }
+    
+    hideGameOverOverlay() {
+        this.gameOverOverlay.style.display = 'none';
+    }
+    
+    setupRestartButton() {
+        this.restartButton.addEventListener('click', () => {
+            this.restartGame();
+        });
+    }
+    
+    restartGame() {
+        // Create a new game instance
+        this.game = new Game2048();
+        
+        // Re-render the grid
+        this.renderer.render(this.game.getGrid());
+        
+        // Hide the overlay
+        this.hideGameOverOverlay();
     }
 }
 
