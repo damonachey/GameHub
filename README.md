@@ -1,6 +1,8 @@
 Game Hub
 ========
 
+See it running live here... https://achey.net/GameHub
+
 Welcome to the Game Hub! This is a place where you can find various games to play.
 
 Explore our collection and enjoy gaming!
@@ -55,4 +57,4 @@ Design philosophy is that these games should be playable in a web browser, entir
 
 ## Utilities
 
-### Card OCR Loader
+- **Card OCR Loader**
