@@ -8,7 +8,7 @@ class HangmanGame {
         this.maxWrongGuesses = 6;
         this.gameOver = false;
         this.gameWon = false;
-        
+
         // DOM elements
         this.wordDisplay = document.getElementById('wordDisplay');
         this.remainingGuesses = document.getElementById('remainingGuesses');
@@ -19,18 +19,18 @@ class HangmanGame {
         this.gameOverTitle = document.getElementById('gameOverTitle');
         this.gameOverWord = document.getElementById('gameOverWord');
         this.restartButton = document.getElementById('restartButton');
-        
+
         // Hangman parts
         this.hangmanParts = ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
-        
+
         this.loadWords();
         this.setupEventListeners();
         this.createAlphabet();
     }
-    
+
     async loadWords() {
         try {
-            const response = await fetch('words.json');
+            const response = await fetch('hangman_dictionary.json');
             const data = await response.json();
             this.words = data.words;
             this.startNewGame();
@@ -46,7 +46,7 @@ class HangmanGame {
             this.startNewGame();
         }
     }
-    
+
     startNewGame() {
         // Reset game state
         this.currentWord = this.getRandomWord();
@@ -54,7 +54,7 @@ class HangmanGame {
         this.wrongGuesses = 0;
         this.gameOver = false;
         this.gameWon = false;
-        
+
         // Reset UI
         this.updateWordDisplay();
         this.updateRemainingGuesses();
@@ -62,19 +62,19 @@ class HangmanGame {
         this.resetAlphabet();
         this.hideAllHangmanParts();
         this.hideGameOverOverlay();
-        
+
         console.log('New word:', this.currentWord); // For debugging
     }
-    
+
     getRandomWord() {
         const randomIndex = Math.floor(Math.random() * this.words.length);
         return this.words[randomIndex];
     }
-    
+
     createAlphabet() {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         this.alphabetContainer.innerHTML = '';
-        
+
         for (let letter of alphabet) {
             const button = document.createElement('button');
             button.className = 'letter-button';
@@ -84,7 +84,7 @@ class HangmanGame {
             this.alphabetContainer.appendChild(button);
         }
     }
-    
+
     resetAlphabet() {
         const buttons = this.alphabetContainer.querySelectorAll('.letter-button');
         buttons.forEach(button => {
@@ -92,16 +92,16 @@ class HangmanGame {
             button.className = 'letter-button';
         });
     }
-    
+
     guessLetter(letter) {
         if (this.gameOver || this.guessedLetters.includes(letter)) {
             return;
         }
-        
+
         this.guessedLetters.push(letter);
         const button = document.getElementById(`letter-${letter}`);
         button.disabled = true;
-        
+
         if (this.currentWord.includes(letter)) {
             // Correct guess
             button.classList.add('correct');
@@ -115,10 +115,10 @@ class HangmanGame {
             this.updateRemainingGuesses();
             this.checkLose();
         }
-        
+
         this.updateGuessedLetters();
     }
-    
+
     updateWordDisplay() {
         let display = '';
         for (let letter of this.currentWord) {
@@ -130,11 +130,11 @@ class HangmanGame {
         }
         this.wordDisplay.textContent = display.trim();
     }
-    
+
     updateRemainingGuesses() {
         this.remainingGuesses.textContent = this.maxWrongGuesses - this.wrongGuesses;
     }
-    
+
     updateGuessedLetters() {
         if (this.guessedLetters.length === 0) {
             this.guessedList.textContent = 'None';
@@ -142,7 +142,7 @@ class HangmanGame {
             this.guessedList.textContent = this.guessedLetters.join(', ');
         }
     }
-    
+
     showHangmanPart() {
         if (this.wrongGuesses <= this.hangmanParts.length) {
             const partId = this.hangmanParts[this.wrongGuesses - 1];
@@ -152,7 +152,7 @@ class HangmanGame {
             }
         }
     }
-    
+
     hideAllHangmanParts() {
         this.hangmanParts.forEach(partId => {
             const part = document.getElementById(partId);
@@ -161,25 +161,25 @@ class HangmanGame {
             }
         });
     }
-    
+
     checkWin() {
         const wordLetters = [...new Set(this.currentWord.split(''))];
         const correctGuesses = wordLetters.filter(letter => this.guessedLetters.includes(letter));
-        
+
         if (correctGuesses.length === wordLetters.length) {
             this.gameWon = true;
             this.gameOver = true;
             this.showGameOverOverlay(true);
         }
     }
-    
+
     checkLose() {
         if (this.wrongGuesses >= this.maxWrongGuesses) {
             this.gameOver = true;
             this.showGameOverOverlay(false);
         }
     }
-    
+
     showGameOverOverlay(won) {
         if (won) {
             this.gameOverTitle.textContent = 'You Won!';
@@ -192,20 +192,20 @@ class HangmanGame {
         }
         this.gameOverOverlay.style.display = 'flex';
     }
-    
+
     hideGameOverOverlay() {
         this.gameOverOverlay.style.display = 'none';
     }
-    
+
     setupEventListeners() {
         this.newGameButton.addEventListener('click', () => {
             this.startNewGame();
         });
-        
+
         this.restartButton.addEventListener('click', () => {
             this.startNewGame();
         });
-        
+
         // Keyboard support
         document.addEventListener('keydown', (event) => {
             const letter = event.key.toUpperCase();
