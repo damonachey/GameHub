@@ -1,0 +1,298 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 40px 0;
+    min-height: 100vh;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #000;
+    font-family: 'Bebas Neue', Arial, sans-serif;
+    font-size: 3rem;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    font-weight: normal;
+}
+
+h1 a {
+    text-decoration: none;
+    color: inherit;
+}
+
+h1 a:hover {
+    text-decoration: underline;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #000;
+    font-size: 5.5rem;
+    font-weight: normal;
+    margin-bottom: 40px;
+    text-align: center;
+    font-family: 'Bebas Neue', Arial, sans-serif;
+    text-transform: uppercase;
+}
+
+h2 a {
+    text-decoration: none;
+    color: inherit;
+}
+
+h2 a:hover {
+    text-decoration: underline;
+}
+
+h3 {
+    color: #000;
+    font-size: 3rem;
+    font-weight: 300;
+    margin: 40px 0 30px 0;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+/* Game Grid */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 80px);
+    grid-template-rows: repeat(4, 80px);
+    gap: 10px;
+    margin: 30px 0;
+}
+
+.memory-card {
+    width: 80px;
+    height: 80px;
+    background-color: #b0c4de;
+    border: 2px solid #9fb8d9;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2f4f4f;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    position: relative;
+    perspective: 1000px;
+}
+
+.memory-card:hover {
+    background-color: #9fb8d9;
+    transform: scale(1.02);
+}
+
+.memory-card.flipped {
+    background-color: #e6f3ff;
+    border-color: #4a90e2;
+}
+
+.memory-card.matched {
+    background-color: #90ee90;
+    border-color: #2e8b57;
+    color: #2e8b57;
+    cursor: default;
+}
+
+.memory-card.matched:hover {
+    background-color: #90ee90;
+    transform: none;
+}
+
+.memory-card .card-content {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.memory-card.flipped .card-content,
+.memory-card.matched .card-content {
+    opacity: 1;
+}
+
+/* Game Stats */
+.game-stats {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2f4f4f;
+}
+
+/* Timer */
+.timer {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #2f4f4f;
+    margin: 20px 0;
+    text-align: center;
+}
+
+/* New Game Button */
+.new-game-button {
+    background-color: #b0c4de;
+    color: #2f4f4f;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+    margin: 20px 0;
+}
+
+.new-game-button:hover {
+    background-color: #9fb8d9;
+}
+
+/* Game Over Overlay */
+.game-over-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.game-over-content {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+}
+
+.game-over-title {
+    font-size: 3rem;
+    color: #2e8b57;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.game-over-stats {
+    font-size: 1.2rem;
+    color: #666;
+    margin: 15px 0;
+    line-height: 1.5;
+}
+
+.game-over-time {
+    font-size: 1.5rem;
+    color: #2f4f4f;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.restart-button {
+    background-color: #b0c4de;
+    color: #2f4f4f;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+}
+
+.restart-button:hover {
+    background-color: #9fb8d9;
+}
+
+/* Instructions */
+#instructions {
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+    font-size: 1rem;
+    max-width: 400px;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 480px) {
+    .memory-grid {
+        grid-template-columns: repeat(4, 70px);
+        grid-template-rows: repeat(4, 70px);
+        gap: 8px;
+    }
+    
+    .memory-card {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+    }
+    
+    .game-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .stat-item {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 200px;
+    }
+}
+
+@media screen and (max-width: 380px) {
+    .memory-grid {
+        grid-template-columns: repeat(4, 60px);
+        grid-template-rows: repeat(4, 60px);
+        gap: 6px;
+    }
+    
+    .memory-card {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+    }
+}
