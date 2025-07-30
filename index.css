@@ -73,7 +73,7 @@ h1 {
     max-width: 200px;
     height: auto;
     max-height: 150px;
-    object-fit: cover;
+    object-fit: contain;
     display: inline-block;
     background-color: #f0f0f0;
     border: 2px solid #e0e0e0;
