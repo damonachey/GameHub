@@ -48,6 +48,187 @@ class Game2048 {
     isGameOver() {
         return this.gameOver;
     }
+    
+    // Movement methods
+    moveLeft() {
+        var moved = false;
+        var newGrid = this.grid.map(row => [...row]);
+        
+        for (var row = 0; row < 4; row++) {
+            var tiles = newGrid[row].filter(val => val !== 0);
+            
+            // Merge adjacent identical tiles
+            for (var i = 0; i < tiles.length - 1; i++) {
+                if (tiles[i] === tiles[i + 1]) {
+                    tiles[i] += tiles[i + 1];
+                    this.score += tiles[i];
+                    tiles.splice(i + 1, 1);
+                }
+            }
+            
+            // Pad with zeros
+            while (tiles.length < 4) {
+                tiles.push(0);
+            }
+            
+            // Check if row changed
+            for (var col = 0; col < 4; col++) {
+                if (this.grid[row][col] !== tiles[col]) {
+                    moved = true;
+                }
+            }
+            
+            newGrid[row] = tiles;
+        }
+        
+        if (moved) {
+            this.grid = newGrid;
+            this.addRandomTile();
+        }
+        
+        return moved;
+    }
+    
+    moveRight() {
+        var moved = false;
+        var newGrid = this.grid.map(row => [...row]);
+        
+        for (var row = 0; row < 4; row++) {
+            var tiles = newGrid[row].filter(val => val !== 0);
+            
+            // Merge adjacent identical tiles (from right)
+            for (var i = tiles.length - 1; i > 0; i--) {
+                if (tiles[i] === tiles[i - 1]) {
+                    tiles[i] += tiles[i - 1];
+                    this.score += tiles[i];
+                    tiles.splice(i - 1, 1);
+                    i--; // Adjust index after splice
+                }
+            }
+            
+            // Pad with zeros at the beginning
+            while (tiles.length < 4) {
+                tiles.unshift(0);
+            }
+            
+            // Check if row changed
+            for (var col = 0; col < 4; col++) {
+                if (this.grid[row][col] !== tiles[col]) {
+                    moved = true;
+                }
+            }
+            
+            newGrid[row] = tiles;
+        }
+        
+        if (moved) {
+            this.grid = newGrid;
+            this.addRandomTile();
+        }
+        
+        return moved;
+    }
+    
+    moveUp() {
+        var moved = false;
+        var newGrid = this.grid.map(row => [...row]);
+        
+        for (var col = 0; col < 4; col++) {
+            var tiles = [];
+            
+            // Extract column
+            for (var row = 0; row < 4; row++) {
+                if (newGrid[row][col] !== 0) {
+                    tiles.push(newGrid[row][col]);
+                }
+            }
+            
+            // Merge adjacent identical tiles
+            for (var i = 0; i < tiles.length - 1; i++) {
+                if (tiles[i] === tiles[i + 1]) {
+                    tiles[i] += tiles[i + 1];
+                    this.score += tiles[i];
+                    tiles.splice(i + 1, 1);
+                }
+            }
+            
+            // Check if column changed and update
+            var originalColumn = [];
+            for (var row = 0; row < 4; row++) {
+                originalColumn.push(this.grid[row][col]);
+            }
+            
+            // Pad with zeros
+            while (tiles.length < 4) {
+                tiles.push(0);
+            }
+            
+            for (var row = 0; row < 4; row++) {
+                if (originalColumn[row] !== tiles[row]) {
+                    moved = true;
+                }
+                newGrid[row][col] = tiles[row];
+            }
+        }
+        
+        if (moved) {
+            this.grid = newGrid;
+            this.addRandomTile();
+        }
+        
+        return moved;
+    }
+    
+    moveDown() {
+        var moved = false;
+        var newGrid = this.grid.map(row => [...row]);
+        
+        for (var col = 0; col < 4; col++) {
+            var tiles = [];
+            
+            // Extract column
+            for (var row = 0; row < 4; row++) {
+                if (newGrid[row][col] !== 0) {
+                    tiles.push(newGrid[row][col]);
+                }
+            }
+            
+            // Merge adjacent identical tiles (from bottom)
+            for (var i = tiles.length - 1; i > 0; i--) {
+                if (tiles[i] === tiles[i - 1]) {
+                    tiles[i] += tiles[i - 1];
+                    this.score += tiles[i];
+                    tiles.splice(i - 1, 1);
+                    i--; // Adjust index after splice
+                }
+            }
+            
+            // Check if column changed and update
+            var originalColumn = [];
+            for (var row = 0; row < 4; row++) {
+                originalColumn.push(this.grid[row][col]);
+            }
+            
+            // Pad with zeros at the beginning
+            while (tiles.length < 4) {
+                tiles.unshift(0);
+            }
+            
+            for (var row = 0; row < 4; row++) {
+                if (originalColumn[row] !== tiles[row]) {
+                    moved = true;
+                }
+                newGrid[row][col] = tiles[row];
+            }
+        }
+        
+        if (moved) {
+            this.grid = newGrid;
+            this.addRandomTile();
+        }
+        
+        return moved;
+    }
 }
 
 // 2048 Game Renderer (View)
@@ -125,19 +306,27 @@ class Game2048Controller {
             switch(event.key) {
                 case 'ArrowUp':
                     event.preventDefault();
-                    console.log('Up arrow pressed');
+                    if (this.game.moveUp()) {
+                        this.renderer.render(this.game.getGrid());
+                    }
                     break;
                 case 'ArrowDown':
                     event.preventDefault();
-                    console.log('Down arrow pressed');
+                    if (this.game.moveDown()) {
+                        this.renderer.render(this.game.getGrid());
+                    }
                     break;
                 case 'ArrowLeft':
                     event.preventDefault();
-                    console.log('Left arrow pressed');
+                    if (this.game.moveLeft()) {
+                        this.renderer.render(this.game.getGrid());
+                    }
                     break;
                 case 'ArrowRight':
                     event.preventDefault();
-                    console.log('Right arrow pressed');
+                    if (this.game.moveRight()) {
+                        this.renderer.render(this.game.getGrid());
+                    }
                     break;
             }
         });
@@ -161,15 +350,23 @@ class Game2048Controller {
             
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (diffX > 0) {
-                    console.log('Swipe left');
+                    if (this.game.moveLeft()) {
+                        this.renderer.render(this.game.getGrid());
+                    }
                 } else {
-                    console.log('Swipe right');
+                    if (this.game.moveRight()) {
+                        this.renderer.render(this.game.getGrid());
+                    }
                 }
             } else {
                 if (diffY > 0) {
-                    console.log('Swipe up');
+                    if (this.game.moveUp()) {
+                        this.renderer.render(this.game.getGrid());
+                    }
                 } else {
-                    console.log('Swipe down');
+                    if (this.game.moveDown()) {
+                        this.renderer.render(this.game.getGrid());
+                    }
                 }
             }
             
