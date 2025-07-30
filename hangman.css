@@ -1,0 +1,295 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 40px 0;
+    min-height: 100vh;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #000;
+    font-family: 'Bebas Neue', Arial, sans-serif;
+    font-size: 3rem;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    font-weight: normal;
+}
+
+h1 a {
+    text-decoration: none;
+    color: inherit;
+}
+
+h1 a:hover {
+    text-decoration: underline;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #000;
+    font-size: 5.5rem;
+    font-weight: normal;
+    margin-bottom: 40px;
+    text-align: center;
+    font-family: 'Bebas Neue', Arial, sans-serif;
+    text-transform: uppercase;
+}
+
+h2 a {
+    text-decoration: none;
+    color: inherit;
+}
+
+h2 a:hover {
+    text-decoration: underline;
+}
+
+h3 {
+    color: #000;
+    font-size: 3rem;
+    font-weight: 300;
+    margin: 40px 0 30px 0;
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+/* Gallows SVG Container */
+.gallows-container {
+    width: 300px;
+    height: 250px;
+    margin: 20px 0;
+}
+
+.gallows {
+    width: 100%;
+    height: 100%;
+}
+
+/* Word Display */
+.word-display {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #2f4f4f;
+    letter-spacing: 5px;
+    margin: 30px 0;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+}
+
+/* Alphabet Grid */
+.alphabet-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin: 30px 0;
+    max-width: 400px;
+}
+
+.letter-button {
+    width: 50px;
+    height: 50px;
+    background-color: #b0c4de;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2f4f4f;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.letter-button:hover {
+    background-color: #9fb8d9;
+}
+
+.letter-button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.letter-button.correct {
+    background-color: #90ee90;
+    color: #2e8b57;
+}
+
+.letter-button.incorrect {
+    background-color: #ffb6c1;
+    color: #dc143c;
+}
+
+/* Guessed Letters Display */
+.guessed-letters {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.guessed-letters h4 {
+    color: #2f4f4f;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.guessed-list {
+    font-size: 1.1rem;
+    color: #666;
+    font-weight: bold;
+}
+
+/* Game Status */
+.game-status {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.remaining-guesses {
+    color: #2f4f4f;
+}
+
+/* New Game Button */
+.new-game-button {
+    background-color: #b0c4de;
+    color: #2f4f4f;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+    margin: 20px 0;
+}
+
+.new-game-button:hover {
+    background-color: #9fb8d9;
+}
+
+/* Game Over Overlay */
+.game-over-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.game-over-content {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+}
+
+.game-over-title {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.game-over-title.win {
+    color: #2e8b57;
+}
+
+.game-over-title.lose {
+    color: #dc143c;
+}
+
+.game-over-word {
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+.restart-button {
+    background-color: #b0c4de;
+    color: #2f4f4f;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+}
+
+.restart-button:hover {
+    background-color: #9fb8d9;
+}
+
+/* Instructions */
+#instructions {
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .word-display {
+        font-size: 2rem;
+        letter-spacing: 5px;
+    }
+
+    .alphabet-container {
+        grid-template-columns: repeat(5, 1fr);
+        max-width: 350px;
+    }
+
+    .letter-button {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+    }
+
+    .gallows-container {
+        width: 250px;
+        height: 200px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .word-display {
+        font-size: 1.5rem;
+        letter-spacing: 3px;
+    }
+
+    .alphabet-container {
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 300px;
+    }
+
+    .letter-button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+}
