@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Hub</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: transparent;
+            background-image: url('');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 40px 0;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #000;
+            font-family: 'Bebas Neue', Arial, sans-serif;
+            font-size: 5.5rem;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            font-weight: normal;
+        }
+        
+        .section-header {
+            color: #000;
+            font-size: 3rem;
+            font-weight: 300;
+            margin: 40px 0 30px 0;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .tile {
+            background: #b0c4de;
+            padding: 40px 20px;
+            margin: 15px 0;
+            min-height: 300px;
+            display: table;
+            text-align: center;
+            color: inherit;
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-transition: background-color, 0.25s, ease-in-out;
+            transition: background-color, 0.25s, ease-in-out;
+            cursor: pointer;
+        }
+        
+        .tile:hover {
+            background-color: #9fb8d9;
+        }
+        
+        .tile .inner {
+            display: table-cell;
+            width: 100%;
+            vertical-align: middle;
+        }
+        
+        .tile .image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .tile img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            max-height: 150px;
+            object-fit: cover;
+            display: inline-block;
+            background-color: #f0f0f0;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .tile h3 {
+            padding: 10px 0 5px;
+            color: #252525;
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin: 10px 0 5px;
+        }
+        
+        @media screen and (max-width: 991px) {
+            .tile {
+                padding: 20px;
+            }
+        }
+        
+        @media screen and (max-width: 767px) {
+            body {
+                padding-right: 80px;
+                padding-left: 80px;
+            }
+            .tile {
+                width: 100%;
+                min-height: 200px;
+            }
+        }
+        
+        @media screen and (max-width: 600px) {
+            body {
+                padding-right: 40px;
+                padding-left: 40px;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            body {
+                padding-right: 15px;
+                padding-left: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Game Hub</h1>
+    <div class="section-header">One Player Games</div>
+    <div class="container">
+        <!-- One Player Games -->
+        <div class="tile">
+            <div class="inner">
+                <div class="image">
+                    <img src="images/2048.png" alt="2048">
+                </div>
+                <h3>2048</h3>
+            </div>
+        </div>
+        <div class="tile">
+            <img src="images/conways_game_of_life.png" alt="Conway's Game of Life">
+            <h3>Conway's Game of Life</h3>
+        </div>
+        <div class="tile">
+            <img src="images/elevator_saga.png" alt="Elevator Saga">
+            <h3>Elevator Saga</h3>
+        </div>
+        <div class="tile">
+            <img src="images/flow_free.png" alt="Flow Free">
+            <h3>Flow Free</h3>
+        </div>
+        <div class="tile">
+            <img src="images/freecell.png" alt="FreeCell">
+            <h3>FreeCell</h3>
+        </div>
+        <div class="tile">
+            <img src="images/frogger.png" alt="Frogger">
+            <h3>Frogger</h3>
+        </div>
+        <div class="tile">
+            <img src="images/hangman.png" alt="Hangman">
+            <h3>Hangman</h3>
+        </div>
+        <div class="tile">
+            <img src="images/memory.png" alt="Memory">
+            <h3>Memory</h3>
+        </div>
+        <div class="tile">
+            <img src="images/minesweeper.png" alt="Minesweeper">
+            <h3>Minesweeper</h3>
+        </div>
+        <div class="tile">
+            <img src="images/snake.png" alt="Snake">
+            <h3>Snake</h3>
+        </div>
+        <div class="tile">
+            <img src="images/solitaire.png" alt="Solitaire (Klondike)">
+            <h3>Solitaire (Klondike)</h3>
+        </div>
+        <div class="tile">
+            <img src="images/sudoku.png" alt="Sudoku">
+            <h3>Sudoku</h3>
+        </div>
+        <div class="tile">
+            <img src="images/tetris.png" alt="Tetris">
+            <h3>Tetris</h3>
+        </div>
+        <div class="tile">
+            <img src="images/unblock_me.png" alt="Unblock Me">
+            <h3>Unblock Me</h3>
+        </div>
+        
+    </div>
+    <div class="section-header">Two Player Games</div>
+    <div class="container">
+        <div class="tile">
+            <img src="images/backgammon.png" alt="Backgammon">
+            <h3>Backgammon</h3>
+        </div>
+        <div class="tile">
+            <img src="images/battleship.png" alt="Battleship">
+            <h3>Battleship</h3>
+        </div>
+        <div class="tile">
+            <img src="images/boggle.png" alt="Boggle">
+            <h3>Boggle</h3>
+        </div>
+        <div class="tile">
+            <img src="images/checkers.png" alt="Checkers">
+            <h3>Checkers</h3>
+        </div>
+        <div class="tile">
+            <img src="images/chess.png" alt="Chess">
+            <h3>Chess</h3>
+        </div>
+        <div class="tile">
+            <img src="images/combat.png" alt="Combat">
+            <h3>Combat</h3>
+        </div>
+        <div class="tile">
+            <img src="images/connect_four.png" alt="Connect Four">
+            <h3>Connect Four</h3>
+        </div>
+        <div class="tile">
+            <img src="images/dominoes.png" alt="Dominoes">
+            <h3>Dominoes</h3>
+        </div>
+        <div class="tile">
+            <img src="images/go.png" alt="Go">
+            <h3>Go</h3>
+        </div>
+        <div class="tile">
+            <img src="images/othello.png" alt="Othello">
+            <h3>Othello</h3>
+        </div>
+        <div class="tile">
+            <img src="images/pong.png" alt="Pong">
+            <h3>Pong</h3>
+        </div>
+        <div class="tile">
+            <img src="images/snake_2p.png" alt="Snake (2 Players)">
+            <h3>Snake (2 Players)</h3>
+        </div>
+        <div class="tile">
+            <img src="images/tic_tac_toe.png" alt="Tic Tac Toe">
+            <h3>Tic Tac Toe</h3>
+        </div>
+        <div class="tile">
+            <img src="images/tron.png" alt="Tron">
+            <h3>Tron</h3>
+        </div>
+        
+    </div>
+    <div class="section-header">Multiplayer Games</div>
+    <div class="container">
+        <div class="tile">
+            <img src="images/bingo.png" alt="Bingo">
+            <h3>Bingo</h3>
+        </div>
+        <div class="tile">
+            <img src="images/blokus.png" alt="Blokus">
+            <h3>Blokus</h3>
+        </div>
+        <div class="tile">
+            <img src="images/codenames.png" alt="Codenames">
+            <h3>Codenames</h3>
+        </div>
+        <div class="tile">
+            <img src="images/farkle.png" alt="Farkle">
+            <h3>Farkle</h3>
+        </div>
+        <div class="tile">
+            <img src="images/liars_dice.png" alt="Liar's Dice">
+            <h3>Liar's Dice</h3>
+        </div>
+        <div class="tile">
+            <img src="images/poker.png" alt="Poker">
+            <h3>Poker</h3>
+        </div>
+        <div class="tile">
+            <img src="images/scrabble.png" alt="Scrabble">
+            <h3>Scrabble</h3>
+        </div>
+        <div class="tile">
+            <img src="images/tsuro.png" alt="Tsuro">
+            <h3>Tsuro</h3>
+        </div>
+        <div class="tile">
+            <img src="images/uno.png" alt="Uno">
+            <h3>Uno</h3>
+        </div>
+        <div class="tile">
+            <img src="images/yahtzee.png" alt="Yahtzee">
+            <h3>Yahtzee</h3>
+        </div>
+    </div>
+</body>
+</html>
