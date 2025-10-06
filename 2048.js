@@ -371,15 +371,18 @@ class Game2048Controller {
             }
         });
         
-        // Touch events for mobile (basic setup for now)
+        // Touch events for mobile (restricted to game area)
         var startX, startY;
+        var gameElement = document.getElementById('game');
         
-        document.addEventListener('touchstart', (event) => {
+        gameElement.addEventListener('touchstart', (event) => {
+            event.preventDefault(); // Prevent page scrolling
             startX = event.touches[0].clientX;
             startY = event.touches[0].clientY;
         });
         
-        document.addEventListener('touchend', (event) => {
+        gameElement.addEventListener('touchend', (event) => {
+            event.preventDefault(); // Prevent page scrolling
             if (!startX || !startY) return;
             
             var endX = event.changedTouches[0].clientX;
@@ -387,6 +390,13 @@ class Game2048Controller {
             
             var diffX = startX - endX;
             var diffY = startY - endY;
+            
+            // Minimum swipe distance to trigger movement (prevents accidental triggers)
+            var minSwipeDistance = 30;
+            
+            if (Math.abs(diffX) < minSwipeDistance && Math.abs(diffY) < minSwipeDistance) {
+                return; // Swipe distance too small, ignore
+            }
             
             if (Math.abs(diffX) > Math.abs(diffY)) {
                 if (diffX > 0) {
