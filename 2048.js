@@ -371,17 +371,26 @@ class Game2048Controller {
             }
         });
         
-        // Touch events for mobile (restricted to game area)
+        // Touch events for mobile (restricted to game container)
         var startX, startY;
-        var gameElement = document.getElementById('game');
+        var gameContainer = document.querySelector('.game-container');
         
-        gameElement.addEventListener('touchstart', (event) => {
+        gameContainer.addEventListener('touchstart', (event) => {
             event.preventDefault(); // Prevent page scrolling
+            // Temporarily disable body scrolling
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            
             startX = event.touches[0].clientX;
             startY = event.touches[0].clientY;
-        });
+        }, { passive: false });
         
-        gameElement.addEventListener('touchend', (event) => {
+        gameContainer.addEventListener('touchmove', (event) => {
+            event.preventDefault(); // Prevent scrolling during swipe
+        }, { passive: false });
+        
+        gameContainer.addEventListener('touchend', (event) => {
             event.preventDefault(); // Prevent page scrolling
             if (!startX || !startY) return;
             
@@ -424,9 +433,14 @@ class Game2048Controller {
                 }
             }
             
+            // Re-enable body scrolling
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            
             startX = null;
             startY = null;
-        });
+        }, { passive: false });
     }
     
     checkGameOver() {

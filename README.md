@@ -58,3 +58,4 @@ Design philosophy is that these games should be playable in a web browser, entir
 ## Utilities
 
 - **Card OCR Loader**
+- **Multi-player secrets sample**

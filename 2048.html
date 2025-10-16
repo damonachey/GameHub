@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>2048 Game</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="2048.css">
 </head>
 <body>
-    <header>
-        <h2><a href="index.html">GAME HUB</a></h2>
-        <h3>2048</h3>
-    </header>
+    <h1><a href="index.html">GAME HUB</a></h1>
+    <div class="section-header">2048</div>
+
     <div class="game-container">
         <div id="game">
             <!-- Game tiles will be inserted here -->
@@ -19,7 +19,7 @@
             Use ↑ ↓ ← → to move tiles on desktop. Swipe to move tiles on mobile.
         </div>
     </div>
-    
+
     <!-- Game Over Overlay -->
     <div id="gameOverOverlay" class="game-over-overlay">
         <div class="game-over-content">
@@ -28,7 +28,7 @@
             <button id="restartButton" class="restart-button">Restart</button>
         </div>
     </div>
-    
+
     <script src="2048.js"></script>
 </body>
 </html>
