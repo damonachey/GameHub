@@ -1,0 +1,166 @@
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    touch-action: none;
+}
+
+#game {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 4px;
+    background-color: #2f4f4f;
+    padding: 4px;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.sudoku-box {
+    display: grid;
+    grid-template-columns: repeat(3, 40px);
+    grid-template-rows: repeat(3, 40px);
+    gap: 1px;
+    background-color: #2f4f4f;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2f4f4f;
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.cell:focus {
+    background-color: #e6f3ff;
+    border: 2px solid #4a90e2;
+}
+
+.cell.selected {
+    background-color: #d4edda;
+    border: 2px solid #28a745;
+}
+
+.cell.given {
+    background-color: #f8f9fa;
+    color: #000;
+    font-weight: 900;
+}
+
+.cell.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+
+#instructions {
+    margin-top: 20px;
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.4;
+}
+
+/* Game Over Overlay */
+.game-over-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.game-over-content {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+}
+
+.game-over-title {
+    font-size: 3rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.game-over-score {
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.restart-button {
+    background-color: #b0c4de;
+    color: #2f4f4f;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+}
+
+.restart-button:hover {
+    background-color: #9fb8d9;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    body {
+        padding: 20px 10px;
+        overflow-x: hidden;
+        overscroll-behavior: none;
+    }
+
+    .sudoku-box {
+        grid-template-columns: repeat(3, 35px);
+        grid-template-rows: repeat(3, 35px);
+    }
+
+    .cell {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+
+    #instructions {
+        font-size: 14px;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sudoku-box {
+        grid-template-columns: repeat(3, 30px);
+        grid-template-rows: repeat(3, 30px);
+    }
+
+    .cell {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+}

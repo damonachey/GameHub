@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Sudoku Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="sudoku.css">
+</head>
+<body>
+    <h1><a href="index.html">GAME HUB</a></h1>
+    <div class="section-header">Sudoku</div>
+
+    <div class="game-container">
+        <div id="game">
+            <!-- Sudoku grid will be inserted here -->
+        </div>
+        <div id="instructions">
+            Click on a cell and use number keys 1-9 to fill in values. Use backspace or delete to clear cells.
+        </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameOverOverlay" class="game-over-overlay">
+        <div class="game-over-content">
+            <div class="game-over-title">Congratulations!</div>
+            <div id="finalScore" class="game-over-score">Puzzle Completed!</div>
+            <button id="restartButton" class="restart-button">New Game</button>
+        </div>
+    </div>
+
+    <script src="sudoku.js"></script>
+</body>
+</html>
