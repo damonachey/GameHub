@@ -4,36 +4,44 @@ class SudokuController {
         this.gameElement = document.getElementById('game');
         this.gameOverOverlay = document.getElementById('gameOverOverlay');
         this.restartButton = document.getElementById('restartButton');
+        this.newGameButton = document.getElementById('newGameButton');
+        this.checkGameButton = document.getElementById('checkGameButton');
+        this.showSolutionButton = document.getElementById('showSolutionButton');
         this.selectedCell = null;
-        
+
         // Initialize empty 9x9 grid
         this.grid = Array(9).fill().map(() => Array(9).fill(0));
-        
+        this.solution = Array(9).fill().map(() => Array(9).fill(0));
+        this.givens = Array(9).fill().map(() => Array(9).fill(false));
+
         // Initialize the game
         this.initializeGrid();
         this.setupEventListeners();
-        
+
         // Select the first cell by default
         var firstCell = document.getElementById('cell-0');
         if (firstCell) {
             this.selectCell(firstCell);
         }
+        
+        // Start a new game
+        this.newGame();
     }
-    
+
     initializeGrid() {
         this.gameElement.innerHTML = '';
-        
+
         // Create 9 boxes (3x3 grid of boxes)
         for (var boxIndex = 0; boxIndex < 9; boxIndex++) {
             var box = document.createElement('div');
             box.className = 'sudoku-box';
             box.id = 'box-' + boxIndex;
-            
+
             // Create 9 cells in each box
             for (var cellIndex = 0; cellIndex < 9; cellIndex++) {
                 var cell = document.createElement('div');
                 cell.className = 'cell';
-                
+
                 // Calculate actual row and column in the full 9x9 grid
                 var boxRow = Math.floor(boxIndex / 3);
                 var boxCol = boxIndex % 3;
@@ -42,55 +50,57 @@ class SudokuController {
                 var actualRow = boxRow * 3 + cellRow;
                 var actualCol = boxCol * 3 + cellCol;
                 var globalIndex = actualRow * 9 + actualCol;
-                
+
                 cell.id = 'cell-' + globalIndex;
                 cell.setAttribute('data-row', actualRow);
                 cell.setAttribute('data-col', actualCol);
                 cell.setAttribute('tabindex', '0');
-                
+
                 // Add click event to select cell (using closure to capture correct cell)
                 cell.addEventListener('click', ((currentCell) => {
                     return () => {
                         this.selectCell(currentCell);
                     };
                 })(cell));
-                
+
                 box.appendChild(cell);
             }
-            
+
             this.gameElement.appendChild(box);
         }
     }
-    
+
     selectCell(cell) {
         // Remove selection from previous cell
         if (this.selectedCell) {
             this.selectedCell.classList.remove('selected');
         }
-        
+
         // Select new cell
         this.selectedCell = cell;
         cell.classList.add('selected');
         cell.focus();
     }
-    
+
     handleKeyInput(event, cell) {
         var key = event.key;
         var row = parseInt(cell.getAttribute('data-row'));
         var col = parseInt(cell.getAttribute('data-col'));
-        
+
         // Handle number input (1-9)
         if (key >= '1' && key <= '9') {
             event.preventDefault();
             var number = parseInt(key);
-            this.setCellValue(row, col, number);
-            cell.textContent = number;
+            if (this.setCellValue(row, col, number)) {
+                cell.textContent = number;
+            }
         }
         // Handle clear input (backspace, delete, or 0)
         else if (key === 'Backspace' || key === 'Delete' || key === '0') {
             event.preventDefault();
-            this.setCellValue(row, col, 0);
-            cell.textContent = '';
+            if (this.setCellValue(row, col, 0)) {
+                cell.textContent = '';
+            }
         }
         // Handle arrow key navigation
         else if (key.startsWith('Arrow')) {
@@ -98,16 +108,21 @@ class SudokuController {
             this.handleArrowNavigation(key, row, col);
         }
     }
-    
+
     setCellValue(row, col, value) {
+        // Don't allow changes to given numbers
+        if (this.givens[row][col]) {
+            return false;
+        }
+        
         this.grid[row][col] = value;
-        // Here you could add validation logic later
+        return true;
     }
-    
+
     handleArrowNavigation(key, row, col) {
         var newRow = row;
         var newCol = col;
-        
+
         switch(key) {
             case 'ArrowUp':
                 newRow = Math.max(0, row - 1);
@@ -122,7 +137,7 @@ class SudokuController {
                 newCol = Math.min(8, col + 1);
                 break;
         }
-        
+
         // Only move if the position actually changed
         if (newRow !== row || newCol !== col) {
             var newIndex = newRow * 9 + newCol;
@@ -132,18 +147,33 @@ class SudokuController {
             }
         }
     }
-    
+
     setupEventListeners() {
         // Restart button
         this.restartButton.addEventListener('click', () => {
             this.restartGame();
         });
         
+        // New Game button
+        this.newGameButton.addEventListener('click', () => {
+            this.newGame();
+        });
+        
+        // Check Game button
+        this.checkGameButton.addEventListener('click', () => {
+            this.checkGame();
+        });
+        
+        // Show Solution button
+        this.showSolutionButton.addEventListener('click', () => {
+            this.showSolution();
+        });
+
         // Prevent context menu on right click
         this.gameElement.addEventListener('contextmenu', (event) => {
             event.preventDefault();
         });
-        
+
         // Global keyboard event listener for arrow keys and number input
         document.addEventListener('keydown', (event) => {
             if (this.selectedCell) {
@@ -151,28 +181,290 @@ class SudokuController {
             }
         });
     }
-    
+
     restartGame() {
-        // Reset grid
-        this.grid = Array(9).fill().map(() => Array(9).fill(0));
-        
-        // Clear all cells
-        var cells = this.gameElement.querySelectorAll('.cell');
-        cells.forEach(cell => {
-            cell.textContent = '';
-            cell.classList.remove('given', 'error', 'selected');
-        });
-        
         // Hide overlay
         this.gameOverOverlay.style.display = 'none';
+        
+        // Generate a new game
+        this.newGame();
         
         // Select the first cell
         var firstCell = document.getElementById('cell-0');
         if (firstCell) {
             this.selectCell(firstCell);
-        } else {
-            this.selectedCell = null;
         }
+    }
+    
+    newGame() {
+        // Generate a new random Sudoku puzzle
+        this.generatePuzzle();
+        this.renderGrid();
+    }
+    
+    generatePuzzle() {
+        // Step 1: Generate a complete valid Sudoku solution
+        this.solution = this.generateCompleteSolution();
+        
+        // Step 2: Create the puzzle by removing numbers
+        this.grid = this.solution.map(row => [...row]);
+        this.createPuzzleFromSolution();
+    }
+    
+    generateCompleteSolution() {
+        var grid = Array(9).fill().map(() => Array(9).fill(0));
+        this.solveSudoku(grid);
+        return grid;
+    }
+    
+    solveSudoku(grid) {
+        var emptyCell = this.findEmptyCell(grid);
+        if (!emptyCell) {
+            return true; // Puzzle is solved
+        }
+        
+        var [row, col] = emptyCell;
+        var numbers = this.shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        
+        for (var num of numbers) {
+            if (this.isValidMove(grid, row, col, num)) {
+                grid[row][col] = num;
+                
+                if (this.solveSudoku(grid)) {
+                    return true;
+                }
+                
+                grid[row][col] = 0; // Backtrack
+            }
+        }
+        
+        return false;
+    }
+    
+    findEmptyCell(grid) {
+        for (var row = 0; row < 9; row++) {
+            for (var col = 0; col < 9; col++) {
+                if (grid[row][col] === 0) {
+                    return [row, col];
+                }
+            }
+        }
+        return null;
+    }
+    
+    isValidMove(grid, row, col, num) {
+        // Check row
+        for (var i = 0; i < 9; i++) {
+            if (grid[row][i] === num) {
+                return false;
+            }
+        }
+        
+        // Check column
+        for (var i = 0; i < 9; i++) {
+            if (grid[i][col] === num) {
+                return false;
+            }
+        }
+        
+        // Check 3x3 box
+        var boxRow = Math.floor(row / 3) * 3;
+        var boxCol = Math.floor(col / 3) * 3;
+        
+        for (var i = boxRow; i < boxRow + 3; i++) {
+            for (var j = boxCol; j < boxCol + 3; j++) {
+                if (grid[i][j] === num) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    shuffleArray(array) {
+        var shuffled = [...array];
+        for (var i = shuffled.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+    
+    createPuzzleFromSolution() {
+        // Reset givens array
+        this.givens = Array(9).fill().map(() => Array(9).fill(false));
+        
+        // Create a list of all cell positions
+        var positions = [];
+        for (var row = 0; row < 9; row++) {
+            for (var col = 0; col < 9; col++) {
+                positions.push([row, col]);
+            }
+        }
+        
+        // Shuffle positions randomly
+        positions = this.shuffleArray(positions);
+        
+        // Remove numbers while ensuring puzzle remains solvable
+        var cellsToRemove = 50; // Adjust for difficulty (40-60 is good range)
+        var removed = 0;
+        
+        for (var [row, col] of positions) {
+            if (removed >= cellsToRemove) break;
+            
+            var backup = this.grid[row][col];
+            this.grid[row][col] = 0;
+            
+            // Check if puzzle still has unique solution
+            if (this.hasUniqueSolution()) {
+                removed++;
+            } else {
+                // Restore the number if removing it makes puzzle unsolvable
+                this.grid[row][col] = backup;
+            }
+        }
+        
+        // Mark remaining numbers as givens
+        for (var row = 0; row < 9; row++) {
+            for (var col = 0; col < 9; col++) {
+                if (this.grid[row][col] !== 0) {
+                    this.givens[row][col] = true;
+                }
+            }
+        }
+    }
+    
+    hasUniqueSolution() {
+        var testGrid = this.grid.map(row => [...row]);
+        var solutions = this.countSolutions(testGrid, 0);
+        return solutions === 1;
+    }
+    
+    countSolutions(grid, count) {
+        if (count > 1) return count; // Early termination
+        
+        var emptyCell = this.findEmptyCell(grid);
+        if (!emptyCell) {
+            return count + 1; // Found a solution
+        }
+        
+        var [row, col] = emptyCell;
+        
+        for (var num = 1; num <= 9; num++) {
+            if (this.isValidMove(grid, row, col, num)) {
+                grid[row][col] = num;
+                count = this.countSolutions(grid, count);
+                grid[row][col] = 0;
+                
+                if (count > 1) break; // Early termination
+            }
+        }
+        
+        return count;
+    }
+    
+    renderGrid() {
+        for (var row = 0; row < 9; row++) {
+            for (var col = 0; col < 9; col++) {
+                var cellIndex = row * 9 + col;
+                var cell = document.getElementById('cell-' + cellIndex);
+                
+                if (cell) {
+                    var value = this.grid[row][col];
+                    cell.textContent = value === 0 ? '' : value;
+                    
+                    // Style given numbers differently
+                    if (this.givens[row][col]) {
+                        cell.classList.add('given');
+                    } else {
+                        cell.classList.remove('given');
+                    }
+                    
+                    cell.classList.remove('error', 'selected');
+                }
+            }
+        }
+    }
+    
+    checkGame() {
+        // Clear previous error highlighting
+        this.clearErrors();
+        
+        var hasErrors = false;
+        
+        // Check each cell for errors
+        for (var row = 0; row < 9; row++) {
+            for (var col = 0; col < 9; col++) {
+                var value = this.grid[row][col];
+                
+                // Skip empty cells and given numbers
+                if (value === 0 || this.givens[row][col]) {
+                    continue;
+                }
+                
+                // Check if this value conflicts with the solution
+                if (value !== this.solution[row][col]) {
+                    this.highlightError(row, col);
+                    hasErrors = true;
+                }
+            }
+        }
+        
+        // Optional: Show message about results
+        if (!hasErrors) {
+            console.log('No errors found!');
+        } else {
+            console.log('Errors highlighted in red');
+        }
+    }
+    
+    clearErrors() {
+        for (var i = 0; i < 81; i++) {
+            var cell = document.getElementById('cell-' + i);
+            if (cell) {
+                cell.classList.remove('error');
+            }
+        }
+    }
+    
+    highlightError(row, col) {
+        var cellIndex = row * 9 + col;
+        var cell = document.getElementById('cell-' + cellIndex);
+        if (cell) {
+            cell.classList.add('error');
+        }
+    }
+    
+    showSolution() {
+        // Clear previous error highlighting
+        this.clearErrors();
+        
+        // Display the complete solution
+        for (var row = 0; row < 9; row++) {
+            for (var col = 0; col < 9; col++) {
+                var cellIndex = row * 9 + col;
+                var cell = document.getElementById('cell-' + cellIndex);
+                
+                if (cell) {
+                    var playerValue = this.grid[row][col];
+                    var solutionValue = this.solution[row][col];
+                    
+                    // Show the correct solution value
+                    cell.textContent = solutionValue;
+                    
+                    // Highlight wrong guesses in red (skip givens and empty cells)
+                    if (!this.givens[row][col] && playerValue !== 0 && playerValue !== solutionValue) {
+                        cell.classList.add('error');
+                    }
+                    
+                    // Update the grid to match the solution
+                    this.grid[row][col] = solutionValue;
+                }
+            }
+        }
+        
+        console.log('Solution displayed - wrong guesses highlighted in red');
     }
 }
 

@@ -64,6 +64,29 @@
     color: #721c24;
 }
 
+.game-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.game-button {
+    background-color: #b0c4de;
+    color: #2f4f4f;
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+}
+
+.game-button:hover {
+    background-color: #9fb8d9;
+}
 
 #instructions {
     margin-top: 20px;
