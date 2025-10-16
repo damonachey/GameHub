@@ -42,15 +42,19 @@ class SudokuController {
                 cell.setAttribute('data-col', actualCol);
                 cell.setAttribute('tabindex', '0');
                 
-                // Add click event to select cell
-                cell.addEventListener('click', () => {
-                    this.selectCell(cell);
-                });
+                // Add click event to select cell (using closure to capture correct cell)
+                cell.addEventListener('click', ((currentCell) => {
+                    return () => {
+                        this.selectCell(currentCell);
+                    };
+                })(cell));
                 
-                // Add keyboard event for number input
-                cell.addEventListener('keydown', (event) => {
-                    this.handleKeyInput(event, cell);
-                });
+                // Add keyboard event for number input (using closure to capture correct cell)
+                cell.addEventListener('keydown', ((currentCell) => {
+                    return (event) => {
+                        this.handleKeyInput(event, currentCell);
+                    };
+                })(cell));
                 
                 box.appendChild(cell);
             }
