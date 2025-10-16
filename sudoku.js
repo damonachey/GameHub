@@ -12,6 +12,12 @@ class SudokuController {
         // Initialize the game
         this.initializeGrid();
         this.setupEventListeners();
+        
+        // Select the first cell by default
+        var firstCell = document.getElementById('cell-0');
+        if (firstCell) {
+            this.selectCell(firstCell);
+        }
     }
     
     initializeGrid() {
@@ -46,13 +52,6 @@ class SudokuController {
                 cell.addEventListener('click', ((currentCell) => {
                     return () => {
                         this.selectCell(currentCell);
-                    };
-                })(cell));
-                
-                // Add keyboard event for number input (using closure to capture correct cell)
-                cell.addEventListener('keydown', ((currentCell) => {
-                    return (event) => {
-                        this.handleKeyInput(event, currentCell);
                     };
                 })(cell));
                 
@@ -124,10 +123,13 @@ class SudokuController {
                 break;
         }
         
-        var newIndex = newRow * 9 + newCol;
-        var newCell = document.getElementById('cell-' + newIndex);
-        if (newCell) {
-            this.selectCell(newCell);
+        // Only move if the position actually changed
+        if (newRow !== row || newCol !== col) {
+            var newIndex = newRow * 9 + newCol;
+            var newCell = document.getElementById('cell-' + newIndex);
+            if (newCell) {
+                this.selectCell(newCell);
+            }
         }
     }
     
@@ -140,6 +142,13 @@ class SudokuController {
         // Prevent context menu on right click
         this.gameElement.addEventListener('contextmenu', (event) => {
             event.preventDefault();
+        });
+        
+        // Global keyboard event listener for arrow keys and number input
+        document.addEventListener('keydown', (event) => {
+            if (this.selectedCell) {
+                this.handleKeyInput(event, this.selectedCell);
+            }
         });
     }
     
@@ -157,8 +166,13 @@ class SudokuController {
         // Hide overlay
         this.gameOverOverlay.style.display = 'none';
         
-        // Clear selection
-        this.selectedCell = null;
+        // Select the first cell
+        var firstCell = document.getElementById('cell-0');
+        if (firstCell) {
+            this.selectCell(firstCell);
+        } else {
+            this.selectedCell = null;
+        }
     }
 }
 
