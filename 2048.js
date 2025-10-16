@@ -377,10 +377,6 @@ class Game2048Controller {
         
         gameContainer.addEventListener('touchstart', (event) => {
             event.preventDefault(); // Prevent page scrolling
-            // Temporarily disable body scrolling
-            document.body.style.overflow = 'hidden';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
             
             startX = event.touches[0].clientX;
             startY = event.touches[0].clientY;
@@ -432,11 +428,6 @@ class Game2048Controller {
                     }
                 }
             }
-            
-            // Re-enable body scrolling
-            document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.width = '';
             
             startX = null;
             startY = null;
