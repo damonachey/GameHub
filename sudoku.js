@@ -502,7 +502,7 @@ class SudokuController {
                         // Don't remove user-entered class here since it's handled in setCellValue
                     }
                     
-                    cell.classList.remove('error', 'selected');
+                    cell.classList.remove('error', 'selected', 'correct');
                     
                     // Clear and render possible values (empty for new game)
                     this.renderPossibleValues(row, col);
@@ -512,42 +512,48 @@ class SudokuController {
     }
     
     checkGame() {
-        // Clear previous error highlighting
-        this.clearErrors();
+        // Clear previous highlighting
+        this.clearHighlighting();
         
         var hasErrors = false;
+        var isComplete = true;
         
-        // Check each cell for errors
+        // Check each cell for errors and completeness
         for (var row = 0; row < 9; row++) {
             for (var col = 0; col < 9; col++) {
                 var value = this.grid[row][col];
                 
-                // Skip empty cells and given numbers
+                // Check if board is complete
+                if (value === 0) {
+                    isComplete = false;
+                }
+                
+                // Skip empty cells and given numbers for highlighting
                 if (value === 0 || this.givens[row][col]) {
                     continue;
                 }
                 
-                // Check if this value conflicts with the solution
-                if (value !== this.solution[row][col]) {
+                // Check if this value matches the solution
+                if (value === this.solution[row][col]) {
+                    this.highlightCorrect(row, col);
+                } else {
                     this.highlightError(row, col);
                     hasErrors = true;
                 }
             }
         }
         
-        // Optional: Show message about results
-        if (!hasErrors) {
-            console.log('No errors found!');
-        } else {
-            console.log('Errors highlighted in red');
+        // Show success overlay if puzzle is complete and correct
+        if (!hasErrors && isComplete) {
+            this.showSuccessOverlay();
         }
     }
     
-    clearErrors() {
+    clearHighlighting() {
         for (var i = 0; i < 81; i++) {
             var cell = document.getElementById('cell-' + i);
             if (cell) {
-                cell.classList.remove('error');
+                cell.classList.remove('error', 'correct');
             }
         }
     }
@@ -560,9 +566,34 @@ class SudokuController {
         }
     }
     
+    highlightCorrect(row, col) {
+        var cellIndex = row * 9 + col;
+        var cell = document.getElementById('cell-' + cellIndex);
+        if (cell) {
+            cell.classList.add('correct');
+        }
+    }
+    
+    showSuccessOverlay() {
+        // Update overlay content for success
+        var titleElement = document.querySelector('.game-over-title');
+        var scoreElement = document.getElementById('finalScore');
+        
+        if (titleElement) {
+            titleElement.textContent = 'Success!';
+        }
+        
+        if (scoreElement) {
+            scoreElement.textContent = 'Puzzle Completed! 🎉';
+        }
+        
+        // Show the overlay
+        this.gameOverOverlay.style.display = 'flex';
+    }
+    
     showSolution() {
-        // Clear previous error highlighting
-        this.clearErrors();
+        // Clear previous highlighting
+        this.clearHighlighting();
         
         // Display the complete solution
         for (var row = 0; row < 9; row++) {
