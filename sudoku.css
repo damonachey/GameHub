@@ -32,15 +32,47 @@
     width: 40px;
     height: 40px;
     background-color: #ffffff;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.main-number {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 18px;
     font-weight: bold;
     color: #2f4f4f;
-    cursor: pointer;
-    border: none;
-    outline: none;
+    z-index: 2;
+}
+
+.possible-values-overlay {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    font-size: 6px;
+    color: #666;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.possible-value {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: normal;
 }
 
 .cell:focus {
@@ -57,6 +89,10 @@
     background-color: #f8f9fa;
     color: #000;
     font-weight: 900;
+}
+
+.cell.user-entered .main-number {
+    font-weight: 400;
 }
 
 .cell.error {

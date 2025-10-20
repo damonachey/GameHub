@@ -13,6 +13,7 @@ class SudokuController {
         this.grid = Array(9).fill().map(() => Array(9).fill(0));
         this.solution = Array(9).fill().map(() => Array(9).fill(0));
         this.givens = Array(9).fill().map(() => Array(9).fill(false));
+        this.possibleValues = Array(9).fill().map(() => Array(9).fill().map(() => new Set()));
 
         // Initialize the game
         this.initializeGrid();
@@ -56,6 +57,18 @@ class SudokuController {
                 cell.setAttribute('data-col', actualCol);
                 cell.setAttribute('tabindex', '0');
 
+                // Create main number display
+                var mainNumber = document.createElement('div');
+                mainNumber.className = 'main-number';
+                mainNumber.id = 'main-' + globalIndex;
+                cell.appendChild(mainNumber);
+                
+                // Create overlay for possible values
+                var overlay = document.createElement('div');
+                overlay.className = 'possible-values-overlay';
+                overlay.id = 'overlay-' + globalIndex;
+                cell.appendChild(overlay);
+
                 // Add click event to select cell (using closure to capture correct cell)
                 cell.addEventListener('click', ((currentCell) => {
                     return () => {
@@ -84,22 +97,52 @@ class SudokuController {
 
     handleKeyInput(event, cell) {
         var key = event.key;
+        var code = event.code;
         var row = parseInt(cell.getAttribute('data-row'));
         var col = parseInt(cell.getAttribute('data-col'));
-
-        // Handle number input (1-9)
-        if (key >= '1' && key <= '9') {
+        
+        // Handle number input (1-9) - use code to detect physical key
+        var digitMatch = code.match(/^Digit([1-9])$/);
+        if (digitMatch) {
+            event.preventDefault();
+            var number = parseInt(digitMatch[1]);
+            
+            if (event.shiftKey) {
+                // Toggle possible value
+                this.togglePossibleValue(row, col, number);
+            } else {
+                // Set main cell value
+                if (this.setCellValue(row, col, number)) {
+                    var cellIndex = row * 9 + col;
+                    var mainDiv = document.getElementById('main-' + cellIndex);
+                    if (mainDiv) {
+                        mainDiv.textContent = number;
+                    }
+                }
+            }
+        }
+        // Handle legacy number input for non-shift cases
+        else if (key >= '1' && key <= '9' && !event.shiftKey) {
             event.preventDefault();
             var number = parseInt(key);
+            // Set main cell value
             if (this.setCellValue(row, col, number)) {
-                cell.textContent = number;
+                var cellIndex = row * 9 + col;
+                var mainDiv = document.getElementById('main-' + cellIndex);
+                if (mainDiv) {
+                    mainDiv.textContent = number;
+                }
             }
         }
         // Handle clear input (backspace, delete, or 0)
         else if (key === 'Backspace' || key === 'Delete' || key === '0') {
             event.preventDefault();
             if (this.setCellValue(row, col, 0)) {
-                cell.textContent = '';
+                var cellIndex = row * 9 + col;
+                var mainDiv = document.getElementById('main-' + cellIndex);
+                if (mainDiv) {
+                    mainDiv.textContent = '';
+                }
             }
         }
         // Handle arrow key navigation
@@ -116,7 +159,72 @@ class SudokuController {
         }
         
         this.grid[row][col] = value;
+        
+        // Apply styling for user-entered numbers
+        var cellIndex = row * 9 + col;
+        var cell = document.getElementById('cell-' + cellIndex);
+        if (cell) {
+            if (value !== 0) {
+                cell.classList.add('user-entered');
+                // Clear possible values when a main number is entered
+                this.possibleValues[row][col].clear();
+                this.renderPossibleValues(row, col);
+            } else {
+                cell.classList.remove('user-entered');
+            }
+        }
+        
         return true;
+    }
+    
+    togglePossibleValue(row, col, number) {
+        // Don't allow changes to given numbers
+        if (this.givens[row][col]) {
+            return false;
+        }
+        
+        var possibleSet = this.possibleValues[row][col];
+        if (possibleSet.has(number)) {
+            possibleSet.delete(number);
+        } else {
+            // Clear main cell value when adding possible values
+            if (this.grid[row][col] !== 0) {
+                this.grid[row][col] = 0;
+                var cellIndex = row * 9 + col;
+                var mainDiv = document.getElementById('main-' + cellIndex);
+                if (mainDiv) {
+                    mainDiv.textContent = '';
+                }
+            }
+            possibleSet.add(number);
+        }
+        
+        // Re-render the possible values for this cell
+        this.renderPossibleValues(row, col);
+        
+        return true;
+    }
+    
+    renderPossibleValues(row, col) {
+        var cellIndex = row * 9 + col;
+        var overlay = document.getElementById('overlay-' + cellIndex);
+        
+        if (overlay) {
+            overlay.innerHTML = '';
+            var possibleSet = this.possibleValues[row][col];
+            
+            // Create divs for each position in 3x3 grid (positions 1-9)
+            for (var num = 1; num <= 9; num++) {
+                var possibleDiv = document.createElement('div');
+                possibleDiv.className = 'possible-value';
+                
+                if (possibleSet.has(num)) {
+                    possibleDiv.textContent = num;
+                }
+                
+                overlay.appendChild(possibleDiv);
+            }
+        }
     }
 
     handleArrowNavigation(key, row, col) {
@@ -294,6 +402,8 @@ class SudokuController {
     createPuzzleFromSolution() {
         // Reset givens array
         this.givens = Array(9).fill().map(() => Array(9).fill(false));
+        // Reset possible values
+        this.possibleValues = Array(9).fill().map(() => Array(9).fill().map(() => new Set()));
         
         // Create a list of all cell positions
         var positions = [];
@@ -325,11 +435,19 @@ class SudokuController {
             }
         }
         
-        // Mark remaining numbers as givens
+        // Mark remaining numbers as givens and clear user-entered styling
         for (var row = 0; row < 9; row++) {
             for (var col = 0; col < 9; col++) {
+                var cellIndex = row * 9 + col;
+                var cell = document.getElementById('cell-' + cellIndex);
+                
                 if (this.grid[row][col] !== 0) {
                     this.givens[row][col] = true;
+                }
+                
+                // Clear user-entered class for new game
+                if (cell) {
+                    cell.classList.remove('user-entered');
                 }
             }
         }
@@ -369,19 +487,25 @@ class SudokuController {
             for (var col = 0; col < 9; col++) {
                 var cellIndex = row * 9 + col;
                 var cell = document.getElementById('cell-' + cellIndex);
+                var mainDiv = document.getElementById('main-' + cellIndex);
                 
-                if (cell) {
+                if (cell && mainDiv) {
                     var value = this.grid[row][col];
-                    cell.textContent = value === 0 ? '' : value;
+                    mainDiv.textContent = value === 0 ? '' : value;
                     
                     // Style given numbers differently
                     if (this.givens[row][col]) {
                         cell.classList.add('given');
+                        cell.classList.remove('user-entered');
                     } else {
                         cell.classList.remove('given');
+                        // Don't remove user-entered class here since it's handled in setCellValue
                     }
                     
                     cell.classList.remove('error', 'selected');
+                    
+                    // Clear and render possible values (empty for new game)
+                    this.renderPossibleValues(row, col);
                 }
             }
         }
@@ -445,13 +569,14 @@ class SudokuController {
             for (var col = 0; col < 9; col++) {
                 var cellIndex = row * 9 + col;
                 var cell = document.getElementById('cell-' + cellIndex);
+                var mainDiv = document.getElementById('main-' + cellIndex);
                 
-                if (cell) {
+                if (cell && mainDiv) {
                     var playerValue = this.grid[row][col];
                     var solutionValue = this.solution[row][col];
                     
                     // Show the correct solution value
-                    cell.textContent = solutionValue;
+                    mainDiv.textContent = solutionValue;
                     
                     // Highlight wrong guesses in red (skip givens and empty cells)
                     if (!this.givens[row][col] && playerValue !== 0 && playerValue !== solutionValue) {
