@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Minesweeper</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="minesweeper.css">
+</head>
+<body>
+    <h1><a href="index.html">GAME HUB</a></h1>
+    <div class="section-header">Minesweeper</div>
+    
+    <div class="game-container">
+        <div id="game-board" class="game-board"></div>
+        
+        <div class="game-buttons">
+            <div class="mine-counter">
+                <span class="label">Mines:</span>
+                <span id="mine-count">40</span>
+            </div>
+            <button id="reset-btn" class="game-button">New Game</button>
+        </div>
+        
+        <div id="game-overlay" class="game-overlay hidden">
+            <div class="overlay-content">
+                <h2 id="overlay-title"></h2>
+                <p id="overlay-message"></p>
+                <button id="overlay-reset" class="game-button">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="minesweeper.js"></script>
+</body>
+</html>
