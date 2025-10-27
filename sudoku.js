@@ -14,6 +14,7 @@ class SudokuController {
         this.solution = Array(9).fill().map(() => Array(9).fill(0));
         this.givens = Array(9).fill().map(() => Array(9).fill(false));
         this.possibleValues = Array(9).fill().map(() => Array(9).fill().map(() => new Set()));
+        this.copiedPossibleValues = null;
 
         // Initialize the game
         this.initializeGrid();
@@ -100,6 +101,20 @@ class SudokuController {
         var code = event.code;
         var row = parseInt(cell.getAttribute('data-row'));
         var col = parseInt(cell.getAttribute('data-col'));
+        
+        // Handle CTRL-C (copy)
+        if (event.ctrlKey && key === 'c') {
+            event.preventDefault();
+            this.copyPossibleValues(row, col);
+            return;
+        }
+        
+        // Handle CTRL-V (paste)
+        if (event.ctrlKey && key === 'v') {
+            event.preventDefault();
+            this.pastePossibleValues(row, col);
+            return;
+        }
         
         // Handle number input (1-9) - use code to detect physical key
         var digitMatch = code.match(/^Digit([1-9])$/);
@@ -225,6 +240,44 @@ class SudokuController {
                 overlay.appendChild(possibleDiv);
             }
         }
+    }
+    
+    copyPossibleValues(row, col) {
+        // Don't copy from given numbers
+        if (this.givens[row][col]) {
+            return;
+        }
+        
+        // Copy the possible values set
+        this.copiedPossibleValues = new Set(this.possibleValues[row][col]);
+    }
+    
+    pastePossibleValues(row, col) {
+        // Don't paste to given numbers
+        if (this.givens[row][col]) {
+            return;
+        }
+        
+        // Check if there are copied values
+        if (!this.copiedPossibleValues) {
+            return;
+        }
+        
+        // Clear the main cell value if present
+        if (this.grid[row][col] !== 0) {
+            this.grid[row][col] = 0;
+            var cellIndex = row * 9 + col;
+            var mainDiv = document.getElementById('main-' + cellIndex);
+            if (mainDiv) {
+                mainDiv.textContent = '';
+            }
+        }
+        
+        // Replace the possible values with the copied values
+        this.possibleValues[row][col] = new Set(this.copiedPossibleValues);
+        
+        // Re-render the possible values for this cell
+        this.renderPossibleValues(row, col);
     }
 
     handleArrowNavigation(key, row, col) {
