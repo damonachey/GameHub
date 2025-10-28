@@ -5,7 +5,7 @@ class Minesweeper {
         this.grid = [];
         this.gameBoard = document.getElementById('game-board');
         this.mineCountDisplay = document.getElementById('mine-count');
-        this.gameOverlay = document.getElementById('game-overlay');
+        this.gameOverlay = document.getElementById('game-over-overlay');
         this.overlayTitle = document.getElementById('overlay-title');
         this.overlayMessage = document.getElementById('overlay-message');
         this.resetBtn = document.getElementById('reset-btn');

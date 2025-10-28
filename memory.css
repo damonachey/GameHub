@@ -106,24 +106,7 @@
     text-align: center;
 }
 
-/* New Game Button */
-.new-game-button {
-    background-color: #b0c4de;
-    color: #2f4f4f;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-transform: uppercase;
-    margin: 20px 0;
-}
-
-.new-game-button:hover {
-    background-color: #9fb8d9;
-}
+/* New Game Button styles are now in buttons.css */
 
 /* Game Over Overlay */
 .game-over-overlay {
@@ -171,22 +154,7 @@
     margin: 20px 0;
 }
 
-.restart-button {
-    background-color: #b0c4de;
-    color: #2f4f4f;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-transform: uppercase;
-}
-
-.restart-button:hover {
-    background-color: #9fb8d9;
-}
+/* Restart Button styles are now in buttons.css */
 
 /* Instructions */
 #instructions {
