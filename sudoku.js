@@ -158,6 +158,9 @@ class SudokuController {
                 if (mainDiv) {
                     mainDiv.textContent = '';
                 }
+                // Clear possible values overlay
+                this.possibleValues[row][col].clear();
+                this.renderPossibleValues(row, col);
             }
         }
         // Handle arrow key navigation
