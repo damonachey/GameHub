@@ -31,6 +31,10 @@
     color: #2f4f4f;
 }
 
+.new-game-button {
+    margin-top: 20px;
+}
+
 #instructions {
     margin-top: 20px;
     text-align: center;

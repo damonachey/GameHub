@@ -12,6 +12,10 @@
     align-items: center;
 }
 
+.new-game-button {
+    margin-top: 15px;
+}
+
 .label {
     color: #2f4f4f;
     margin-right: 5px;
