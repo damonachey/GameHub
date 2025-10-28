@@ -106,8 +106,6 @@
     text-align: center;
 }
 
-/* Button and Game Over Overlay styles are now in style.css */
-
 .game-over-stats {
     font-size: 1.2rem;
     color: #666;

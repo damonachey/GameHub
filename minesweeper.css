@@ -4,13 +4,6 @@
     text-align: center;
 }
 
-.game-buttons {
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
-    justify-content: center;
-}
-
 .mine-counter {
     font-size: 1rem;
     font-weight: bold;
@@ -23,8 +16,6 @@
     color: #2f4f4f;
     margin-right: 5px;
 }
-
-/* Button styles are now in style.css */
 
 .game-board {
     display: grid;
@@ -98,9 +89,6 @@
 .cell.num-6 { color: #607d8b; }
 .cell.num-7 { color: #795548; }
 .cell.num-8 { color: #e91e63; }
-
-/* Game Over Overlay styles are now in style.css */
-/* Note: Changed .overlay-content to .game-over-content for consistency */
 
 .game-over-content h2 {
     margin-bottom: 15px;

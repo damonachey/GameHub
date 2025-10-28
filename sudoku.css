@@ -112,16 +112,12 @@
     justify-content: center;
 }
 
-/* Button styles are now in style.css */
-
 #instructions {
     margin-top: 20px;
     text-align: center;
     max-width: 400px;
     line-height: 1.4;
 }
-
-/* Game Over Overlay and Button styles are now in style.css */
 
 .game-over-score {
     font-size: 1.5rem;

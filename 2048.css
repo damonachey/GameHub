@@ -36,7 +36,6 @@
     text-align: center;
 }
 
-/* Game Over Overlay - shared styles in style.css */
 .game-over-score {
     font-size: 1.5rem;
     color: #666;
