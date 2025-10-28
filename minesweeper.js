@@ -8,8 +8,8 @@ class Minesweeper {
         this.gameOverlay = document.getElementById('game-over-overlay');
         this.overlayTitle = document.getElementById('overlay-title');
         this.overlayMessage = document.getElementById('overlay-message');
-        this.resetBtn = document.getElementById('reset-btn');
-        this.overlayResetBtn = document.getElementById('overlay-reset');
+        this.newGameButton = document.getElementById('newGameButton');
+        this.newGameButton2 = document.getElementById('newGameButton2');
         
         this.gameState = 'playing'; // 'playing', 'won', 'lost'
         this.flaggedMines = 0;
@@ -131,8 +131,8 @@ class Minesweeper {
     setupEventListeners() {
         this.gameBoard.addEventListener('click', (e) => this.handleCellClick(e));
         this.gameBoard.addEventListener('contextmenu', (e) => this.handleRightClick(e));
-        this.resetBtn.addEventListener('click', () => this.initializeGame());
-        this.overlayResetBtn.addEventListener('click', () => this.initializeGame());
+        this.newGameButton.addEventListener('click', () => this.initializeGame());
+        this.newGameButton2.addEventListener('click', () => this.initializeGame());
         this.gameOverlay.addEventListener('click', (e) => {
             if (e.target === this.gameOverlay) {
                 this.hideOverlay();
