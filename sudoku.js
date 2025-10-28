@@ -670,6 +670,11 @@ class SudokuController {
                         cell.classList.add('error');
                     }
                     
+                    // Add user-entered class to filled-in cells (not givens) for thinner font
+                    if (!this.givens[row][col]) {
+                        cell.classList.add('user-entered');
+                    }
+                    
                     // Update the grid to match the solution
                     this.grid[row][col] = solutionValue;
                 }
