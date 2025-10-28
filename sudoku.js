@@ -631,18 +631,6 @@ class SudokuController {
     }
     
     showSuccessOverlay() {
-        // Update overlay content for success
-        var titleElement = document.querySelector('.game-over-title');
-        var scoreElement = document.getElementById('finalScore');
-        
-        if (titleElement) {
-            titleElement.textContent = 'Success!';
-        }
-        
-        if (scoreElement) {
-            scoreElement.textContent = 'Puzzle Completed! 🎉';
-        }
-        
         // Show the overlay
         this.gameOverOverlay.style.display = 'flex';
     }
