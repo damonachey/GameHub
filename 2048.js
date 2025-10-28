@@ -326,8 +326,8 @@ class Game2048Controller {
         this.renderer = new Game2048Renderer(document.getElementById('game'));
         this.gameOverOverlay = document.getElementById('gameOverOverlay');
         this.finalScoreElement = document.getElementById('finalScore');
-        this.restartButton = document.getElementById('restartButton');
         this.newGameButton = document.getElementById('newGameButton');
+        this.newGameButton2 = document.getElementById('newGameButton2');
         
         // Initial render
         this.renderer.render(this.game.getGrid());
@@ -452,7 +452,7 @@ class Game2048Controller {
     }
     
     setupRestartButton() {
-        this.restartButton.addEventListener('click', () => {
+        this.newGameButton2.addEventListener('click', () => {
             this.restartGame();
         });
     }

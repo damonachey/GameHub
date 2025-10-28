@@ -18,7 +18,7 @@ class HangmanGame {
         this.gameOverOverlay = document.getElementById('gameOverOverlay');
         this.gameOverTitle = document.getElementById('gameOverTitle');
         this.gameOverWord = document.getElementById('gameOverWord');
-        this.restartButton = document.getElementById('restartButton');
+        this.newGameButton2 = document.getElementById('newGameButton2');
 
         // Hangman parts
         this.hangmanParts = ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
@@ -202,7 +202,7 @@ class HangmanGame {
             this.startNewGame();
         });
 
-        this.restartButton.addEventListener('click', () => {
+        this.newGameButton2.addEventListener('click', () => {
             this.startNewGame();
         });
 

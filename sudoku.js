@@ -7,7 +7,7 @@ class SudokuController {
         this.newGameButton = document.getElementById('newGameButton');
         this.checkGameButton = document.getElementById('checkGameButton');
         this.showSolutionButton = document.getElementById('showSolutionButton');
-        this.selectedCell = null;
+        this.newGameButton2 = document.getElementById('newGameButton2');
 
         // Initialize empty 9x9 grid
         this.grid = Array(9).fill().map(() => Array(9).fill(0));
@@ -319,7 +319,7 @@ class SudokuController {
         });
         
         // New Game button
-        this.newGameButton.addEventListener('click', () => {
+        this.newGameButton2.addEventListener('click', () => {
             this.newGame();
         });
         

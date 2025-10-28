@@ -23,7 +23,7 @@ class MemoryGame {
         this.gameOverOverlay = document.getElementById('gameOverOverlay');
         this.gameOverTime = document.getElementById('gameOverTime');
         this.finalMoves = document.getElementById('finalMoves');
-        this.restartButton = document.getElementById('restartButton');
+        this.newGameButton2 = document.getElementById('newGameButton2');
         
         this.setupEventListeners();
         this.initializeGame();
@@ -34,7 +34,7 @@ class MemoryGame {
             this.initializeGame();
         });
         
-        this.restartButton.addEventListener('click', () => {
+        this.newGameButton2.addEventListener('click', () => {
             this.initializeGame();
         });
     }
