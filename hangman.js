@@ -182,7 +182,7 @@ class HangmanGame {
 
     showGameOverOverlay(won) {
         if (won) {
-            this.gameOverTitle.textContent = 'You Won!';
+            this.gameOverTitle.textContent = 'Winner';
             this.gameOverTitle.className = 'game-over-title win';
             this.gameOverWord.textContent = `The word was: ${this.currentWord}`;
         } else {

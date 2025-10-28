@@ -147,12 +147,12 @@ class Minesweeper {
     showOverlay(title, message, isWin = false) {
         this.overlayTitle.textContent = title;
         this.overlayMessage.textContent = message;
-        this.overlayTitle.className = isWin ? 'win-overlay' : 'lose-overlay';
-        this.gameOverlay.classList.remove('hidden');
+        this.overlayTitle.className = isWin ? 'game-over-title win' : 'game-over-title lose';
+        this.gameOverlay.style.display = 'flex';
     }
     
     hideOverlay() {
-        this.gameOverlay.classList.add('hidden');
+        this.gameOverlay.style.display = 'none';
     }
     
     handleCellClick(e) {
@@ -236,7 +236,7 @@ class Minesweeper {
             }, 300);
         }
         
-        var title = isWin ? 'Congratulations!' : 'Game Over!';
+        var title = isWin ? 'Winner' : 'Game Over';
         var message = isWin ? 'You found all the mines!' : 'You hit a mine!';
         
         setTimeout(() => {

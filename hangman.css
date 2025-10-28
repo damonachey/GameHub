@@ -103,46 +103,7 @@
     color: #2f4f4f;
 }
 
-/* New Game Button styles are now in buttons.css */
-
-/* Game Over Overlay */
-.game-over-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.game-over-content {
-    background-color: rgba(255, 255, 255, 0.85);
-    padding: 40px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    max-width: 400px;
-    width: 90%;
-}
-
-.game-over-title {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.game-over-title.win {
-    color: #2e8b57;
-}
-
-.game-over-title.lose {
-    color: #dc143c;
-}
+/* Button and Game Over Overlay styles are now in style.css */
 
 .game-over-word {
     font-size: 1.5rem;
@@ -150,8 +111,6 @@
     margin-bottom: 30px;
     font-weight: bold;
 }
-
-/* Restart Button styles are now in buttons.css */
 
 /* Instructions */
 #instructions {
@@ -162,7 +121,7 @@
 }
 
 /* Responsive Design */
-@media screen and (max-width: 768px) {
+@media (max-width: 768px) {
     .word-display {
         font-size: 2rem;
         letter-spacing: 5px;
@@ -185,7 +144,7 @@
     }
 }
 
-@media screen and (max-width: 480px) {
+@media (max-width: 480px) {
     .word-display {
         font-size: 1.5rem;
         letter-spacing: 3px;
