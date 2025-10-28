@@ -3,7 +3,6 @@ class SudokuController {
     constructor() {
         this.gameElement = document.getElementById('game');
         this.gameOverOverlay = document.getElementById('gameOverOverlay');
-        this.restartButton = document.getElementById('restartButton');
         this.newGameButton = document.getElementById('newGameButton');
         this.checkGameButton = document.getElementById('checkGameButton');
         this.showSolutionButton = document.getElementById('showSolutionButton');
@@ -313,13 +312,14 @@ class SudokuController {
     }
 
     setupEventListeners() {
-        // Restart button
-        this.restartButton.addEventListener('click', () => {
-            this.restartGame();
+        // New Game button (in-game)
+        this.newGameButton.addEventListener('click', () => {
+            this.newGame();
         });
         
-        // New Game button
+        // New Game button (overlay)
         this.newGameButton2.addEventListener('click', () => {
+            this.gameOverOverlay.style.display = 'none';
             this.newGame();
         });
         
