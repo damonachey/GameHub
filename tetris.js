@@ -298,23 +298,24 @@ class TetrisRenderer {
         }
         
         const ctx = this.nextCtx;
-        ctx.clearRect(0, 0, this.nextCanvas.width, this.nextCanvas.height);
         
-        // Draw empty grid background (4x4)
-        for (let row = 0; row < 4; row++) {
-            for (let col = 0; col < 4; col++) {
-                this.drawEmptyCell(ctx, col, row);
-            }
-        }
+        // Clear with white background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, this.nextCanvas.width, this.nextCanvas.height);
         
         const shape = game.nextPiece.shape;
         const offsetX = (4 - shape[0].length) / 2;
         const offsetY = (4 - shape.length) / 2;
         
+        // Draw next piece (no grid)
         for (let row = 0; row < shape.length; row++) {
             for (let col = 0; col < shape[row].length; col++) {
                 if (shape[row][col]) {
-                    this.drawCell(ctx, offsetX + col, offsetY + row, game.nextPiece.color);
+                    const px = (offsetX + col) * this.CELL_SIZE;
+                    const py = (offsetY + row) * this.CELL_SIZE;
+                    
+                    ctx.fillStyle = game.nextPiece.color;
+                    ctx.fillRect(px + 2, py + 2, this.CELL_SIZE - 4, this.CELL_SIZE - 4);
                 }
             }
         }
