@@ -31,6 +31,19 @@
     color: #2f4f4f;
 }
 
+.tile.tile-2 { background-color: #eee4da; }
+.tile.tile-4 { background-color: #ede0c8; }
+.tile.tile-8 { background-color: #f2b179; }
+.tile.tile-16 { background-color: #f59563; }
+.tile.tile-32 { background-color: #f67c5f; }
+.tile.tile-64 { background-color: #f65e3b; }
+.tile.tile-128 { background-color: #edcf72; }
+.tile.tile-256 { background-color: #edcc61; }
+.tile.tile-512 { background-color: #edc850; }
+.tile.tile-1024 { background-color: #edc53f; }
+.tile.tile-2048 { background-color: #edc22e; }
+.tile.tile-higher { background-color: #3c3a32; }
+
 .new-game-button {
     margin-top: 20px;
 }
