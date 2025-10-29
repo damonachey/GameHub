@@ -496,6 +496,9 @@ class TetrisController {
         
         document.addEventListener('keydown', this.boundKeyHandler);
         
+        // Touch controls for mobile
+        this.setupTouchControls();
+        
         if (this.renderer.gameOverOverlay) {
             this.renderer.gameOverOverlay.addEventListener('click', (e) => {
                 if (e.target === this.renderer.gameOverOverlay) {
@@ -511,6 +514,83 @@ class TetrisController {
                 }
             });
         }
+    }
+    
+    setupTouchControls() {
+        const canvas = this.renderer.gameCanvas;
+        if (!canvas) {
+            return;
+        }
+        
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+        const SWIPE_THRESHOLD = 30;
+        const TAP_THRESHOLD = 10;
+        const TAP_TIME_THRESHOLD = 200;
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            touchStartTime = Date.now();
+        }, { passive: false });
+        
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            
+            if (this.game.gameOver || this.game.isPaused) {
+                return;
+            }
+            
+            const touch = e.changedTouches[0];
+            const touchEndX = touch.clientX;
+            const touchEndY = touch.clientY;
+            const touchEndTime = Date.now();
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            const deltaTime = touchEndTime - touchStartTime;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            // Tap to rotate
+            if (distance < TAP_THRESHOLD && deltaTime < TAP_TIME_THRESHOLD) {
+                this.game.rotatePiece();
+                this.renderer.renderGame(this.game);
+                return;
+            }
+            
+            // Swipe gestures
+            if (distance >= SWIPE_THRESHOLD) {
+                const absDeltaX = Math.abs(deltaX);
+                const absDeltaY = Math.abs(deltaY);
+                
+                if (absDeltaX > absDeltaY) {
+                    // Horizontal swipe
+                    if (deltaX > 0) {
+                        // Swipe right
+                        this.game.movePiece('right');
+                    } else {
+                        // Swipe left
+                        this.game.movePiece('left');
+                    }
+                } else {
+                    // Vertical swipe
+                    if (deltaY > 0) {
+                        // Swipe down - soft drop
+                        this.game.movePiece('down');
+                    } else {
+                        // Swipe up - hard drop
+                        this.game.hardDrop();
+                        this.renderer.renderNext(this.game);
+                        this.renderer.updateStats(this.game);
+                    }
+                }
+                
+                this.renderer.renderGame(this.game);
+            }
+        }, { passive: false });
     }
     
     cleanup() {

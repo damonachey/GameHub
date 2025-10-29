@@ -74,6 +74,14 @@
     margin-right: auto;
 }
 
+.mobile-controls {
+    display: none;
+}
+
+.desktop-controls {
+    display: block;
+}
+
 .game-over-score {
     font-size: 1.5rem;
     color: #666;
@@ -112,6 +120,14 @@
     #instructions {
         font-size: 14px;
         margin-top: 15px;
+    }
+    
+    .mobile-controls {
+        display: block;
+    }
+    
+    .desktop-controls {
+        display: none;
     }
 }
 
