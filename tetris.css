@@ -1,0 +1,123 @@
+.game-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 20px;
+    touch-action: none;
+}
+
+#game-canvas {
+    display: block;
+    background-color: #2f4f4f;
+    padding: 4px;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 150px;
+}
+
+.stat-box {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.next-box {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+#next-canvas {
+    display: block;
+    margin: 0 auto;
+    background-color: #2f4f4f;
+    padding: 4px;
+}
+
+.new-game-button {
+    display: block;
+    margin: 20px auto;
+    max-width: 200px;
+}
+
+#instructions {
+    margin-top: 20px;
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.game-over-score {
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    body {
+        padding: 20px 10px;
+        overflow-x: hidden;
+    }
+
+    .game-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .side-panel {
+        width: 100%;
+        max-width: 300px;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .stat-box, .next-box {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    #game-canvas {
+        width: 280px;
+        height: 560px;
+    }
+
+    #instructions {
+        font-size: 14px;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    #game-canvas {
+        width: 250px;
+        height: 500px;
+    }
+}

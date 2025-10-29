@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Tetris Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tetris.css">
+</head>
+<body>
+    <h1><a href="index.html">GAME HUB</a></h1>
+    <div class="section-header">Tetris</div>
+
+    <div class="game-container">
+        <canvas id="game-canvas" width="300" height="600"></canvas>
+        
+        <div class="side-panel">
+            <div class="stat-box">
+                <div class="stat-label">Score</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-label">Level</div>
+                <div class="stat-value" id="level">1</div>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-label">Lines</div>
+                <div class="stat-value" id="lines">0</div>
+            </div>
+            
+            <div class="next-box">
+                <div class="stat-label">Next</div>
+                <canvas id="next-canvas" width="120" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <button id="newGameButton" class="game-button new-game-button">New Game</button>
+    
+    <div id="instructions">
+        Use ↑ ↓ ← → to move and rotate. Press Space to rotate. Press Enter for hard drop. Press P or ESC to pause.
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameOverOverlay" class="game-over-overlay">
+        <div class="game-over-content">
+            <div class="game-over-title">Game Over</div>
+            <div id="finalScore" class="game-over-score">Final Score: 0</div>
+            <button id="newGameButton2" class="game-button restart-button">Play Again</button>
+        </div>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div id="pauseOverlay" class="game-over-overlay">
+        <div class="game-over-content">
+            <div class="game-over-title">Paused</div>
+            <div>Press P or ESC to resume</div>
+        </div>
+    </div>
+
+    <script src="tetris.js"></script>
+</body>
+</html>
