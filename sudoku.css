@@ -112,11 +112,62 @@
     justify-content: center;
 }
 
+.number-pad {
+    display: none;
+    margin: 20px auto;
+    max-width: 300px;
+}
+
+.number-pad-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    justify-content: center;
+}
+
+.number-btn, .control-btn {
+    flex: 1;
+    min-width: 60px;
+    height: 50px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #b0c4de;
+    color: #2f4f4f;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.number-btn:active, .control-btn:active {
+    transform: scale(0.95);
+    background-color: #9fb8d9;
+}
+
+.control-btn {
+    font-size: 16px;
+}
+
+#pencilModeBtn.active {
+    background-color: #f0a000;
+    color: white;
+}
+
 #instructions {
     margin-top: 20px;
     text-align: center;
     max-width: 400px;
     line-height: 1.4;
+}
+
+.mobile-controls {
+    display: none;
+}
+
+.desktop-controls {
+    display: block;
 }
 
 .game-over-score {
@@ -147,6 +198,18 @@
     #instructions {
         font-size: 14px;
         margin-top: 15px;
+    }
+    
+    .number-pad {
+        display: block;
+    }
+    
+    .mobile-controls {
+        display: block;
+    }
+    
+    .desktop-controls {
+        display: none;
     }
 }
 

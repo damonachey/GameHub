@@ -15,13 +15,38 @@
         <div id="game">
             <!-- Sudoku grid will be inserted here -->
         </div>
+        
+        <!-- Mobile Number Pad -->
+        <div id="numberPad" class="number-pad">
+            <div class="number-pad-row">
+                <button class="number-btn" data-number="1">1</button>
+                <button class="number-btn" data-number="2">2</button>
+                <button class="number-btn" data-number="3">3</button>
+            </div>
+            <div class="number-pad-row">
+                <button class="number-btn" data-number="4">4</button>
+                <button class="number-btn" data-number="5">5</button>
+                <button class="number-btn" data-number="6">6</button>
+            </div>
+            <div class="number-pad-row">
+                <button class="number-btn" data-number="7">7</button>
+                <button class="number-btn" data-number="8">8</button>
+                <button class="number-btn" data-number="9">9</button>
+            </div>
+            <div class="number-pad-row">
+                <button id="pencilModeBtn" class="control-btn">Pencil</button>
+                <button id="eraseBtn" class="control-btn">Erase</button>
+            </div>
+        </div>
+        
         <div class="game-buttons">
             <button id="newGameButton" class="game-button">New Game</button>
             <button id="checkGameButton" class="game-button">Check Board</button>
             <button id="showSolutionButton" class="game-button">Show Solution</button>
         </div>
         <div id="instructions">
-            Click on a cell and use number keys 1-9 to enter your answer. Hold SHIFT + number keys to add/remove possible values (small overlay numbers). Use backspace or delete to clear cells. Use arrow keys to navigate between cells.
+            <div class="desktop-controls">Click on a cell and use number keys 1-9 to enter your answer. Hold SHIFT + number keys to add/remove possible values (small overlay numbers). Use backspace or delete to clear cells. Use arrow keys to navigate between cells.</div>
+            <div class="mobile-controls">Tap a cell, then tap a number to fill it. Use Pencil mode for notes. Tap Erase to clear.</div>
         </div>
     </div>
 

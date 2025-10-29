@@ -413,6 +413,8 @@ class SudokuController {
         this.checkGameButton = document.getElementById('checkGameButton');
         this.showSolutionButton = document.getElementById('showSolutionButton');
         this.newGameButton2 = document.getElementById('newGameButton2');
+        this.pencilModeBtn = document.getElementById('pencilModeBtn');
+        this.eraseBtn = document.getElementById('eraseBtn');
         
         if (!gameElement) {
             console.error('Game element not found');
@@ -422,12 +424,14 @@ class SudokuController {
         this.game = new SudokuGame();
         this.renderer = new SudokuRenderer(gameElement);
         this.selectedCell = null;
+        this.pencilMode = false;
         
         // Store bound event handler
         this.boundKeyHandler = this.handleKeyInput.bind(this);
         
         this.renderer.initializeGrid(this.onCellClick.bind(this));
         this.setupEventListeners();
+        this.setupNumberPad();
         
         const firstCell = document.getElementById('cell-0');
         if (firstCell) {
@@ -584,6 +588,63 @@ class SudokuController {
             this.gameOverOverlay.addEventListener('click', (e) => {
                 if (e.target === this.gameOverOverlay) {
                     this.gameOverOverlay.style.display = 'none';
+                }
+            });
+        }
+    }
+    
+    setupNumberPad() {
+        // Number buttons (1-9)
+        const numberButtons = document.querySelectorAll('.number-btn');
+        numberButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!this.selectedCell) {
+                    return;
+                }
+                
+                const number = parseInt(btn.getAttribute('data-number'));
+                const row = parseInt(this.selectedCell.getAttribute('data-row'));
+                const col = parseInt(this.selectedCell.getAttribute('data-col'));
+                
+                if (this.pencilMode) {
+                    // Pencil mode - toggle possible value
+                    if (this.game.togglePossibleValue(row, col, number)) {
+                        this.renderer.renderPossibleValues(row, col, this.game.possibleValues[row][col]);
+                    }
+                } else {
+                    // Normal mode - set cell value
+                    if (this.game.setCellValue(row, col, number)) {
+                        this.renderer.updateCell(row, col, number, false, true);
+                        this.renderer.renderPossibleValues(row, col, this.game.possibleValues[row][col]);
+                    }
+                }
+            });
+        });
+        
+        // Pencil mode button
+        if (this.pencilModeBtn) {
+            this.pencilModeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.pencilMode = !this.pencilMode;
+                this.pencilModeBtn.classList.toggle('active', this.pencilMode);
+            });
+        }
+        
+        // Erase button
+        if (this.eraseBtn) {
+            this.eraseBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!this.selectedCell) {
+                    return;
+                }
+                
+                const row = parseInt(this.selectedCell.getAttribute('data-row'));
+                const col = parseInt(this.selectedCell.getAttribute('data-col'));
+                
+                if (this.game.setCellValue(row, col, 0)) {
+                    this.renderer.updateCell(row, col, 0, false, false);
+                    this.renderer.renderPossibleValues(row, col, this.game.possibleValues[row][col]);
                 }
             });
         }
