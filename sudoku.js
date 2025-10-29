@@ -183,6 +183,10 @@ class SudokuGame {
         this.grid[row][col] = value;
         
         if (value !== 0) {
+            // Clear possible values when entering a number
+            this.possibleValues[row][col].clear();
+        } else {
+            // Clear possible values when deleting/clearing
             this.possibleValues[row][col].clear();
         }
         
@@ -194,13 +198,15 @@ class SudokuGame {
             return false;
         }
         
+        // Clear the entered number when adding possible values
+        if (this.grid[row][col] !== 0) {
+            this.grid[row][col] = 0;
+        }
+        
         const possibleSet = this.possibleValues[row][col];
         if (possibleSet.has(number)) {
             possibleSet.delete(number);
         } else {
-            if (this.grid[row][col] !== 0) {
-                this.grid[row][col] = 0;
-            }
             possibleSet.add(number);
         }
         
@@ -486,6 +492,11 @@ class SudokuController {
             
             if (event.shiftKey) {
                 if (this.game.togglePossibleValue(row, col, number)) {
+                    const cellIndex = row * 9 + col;
+                    const mainDiv = document.getElementById('main-' + cellIndex);
+                    if (mainDiv) {
+                        mainDiv.textContent = '';
+                    }
                     this.renderer.renderPossibleValues(row, col, this.game.possibleValues[row][col]);
                 }
             } else {
@@ -508,7 +519,11 @@ class SudokuController {
         else if (key === 'Backspace' || key === 'Delete' || key === '0') {
             event.preventDefault();
             if (this.game.setCellValue(row, col, 0)) {
-                this.renderer.updateCell(row, col, 0, false, false);
+                const cellIndex = row * 9 + col;
+                const mainDiv = document.getElementById('main-' + cellIndex);
+                if (mainDiv) {
+                    mainDiv.textContent = '';
+                }
                 this.renderer.renderPossibleValues(row, col, this.game.possibleValues[row][col]);
             }
         }
@@ -610,6 +625,11 @@ class SudokuController {
                 if (this.pencilMode) {
                     // Pencil mode - toggle possible value
                     if (this.game.togglePossibleValue(row, col, number)) {
+                        const cellIndex = row * 9 + col;
+                        const mainDiv = document.getElementById('main-' + cellIndex);
+                        if (mainDiv) {
+                            mainDiv.textContent = '';
+                        }
                         this.renderer.renderPossibleValues(row, col, this.game.possibleValues[row][col]);
                     }
                 } else {
@@ -643,7 +663,11 @@ class SudokuController {
                 const col = parseInt(this.selectedCell.getAttribute('data-col'));
                 
                 if (this.game.setCellValue(row, col, 0)) {
-                    this.renderer.updateCell(row, col, 0, false, false);
+                    const cellIndex = row * 9 + col;
+                    const mainDiv = document.getElementById('main-' + cellIndex);
+                    if (mainDiv) {
+                        mainDiv.textContent = '';
+                    }
                     this.renderer.renderPossibleValues(row, col, this.game.possibleValues[row][col]);
                 }
             });
