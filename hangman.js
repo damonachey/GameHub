@@ -213,6 +213,13 @@ class HangmanGame {
                 this.guessLetter(letter);
             }
         });
+        
+        // Click background to dismiss overlay
+        this.gameOverOverlay.addEventListener('click', (e) => {
+            if (e.target === this.gameOverOverlay) {
+                this.hideGameOverOverlay();
+            }
+        });
     }
 }
 

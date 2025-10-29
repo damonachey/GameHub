@@ -37,6 +37,13 @@ class MemoryGame {
         this.newGameButton2.addEventListener('click', () => {
             this.initializeGame();
         });
+        
+        // Click background to dismiss overlay
+        this.gameOverOverlay.addEventListener('click', (e) => {
+            if (e.target === this.gameOverOverlay) {
+                this.hideGameOverOverlay();
+            }
+        });
     }
     
     initializeGame() {

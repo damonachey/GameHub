@@ -336,6 +336,7 @@ class Game2048Controller {
         this.setupEventListeners();
         this.setupRestartButton();
         this.setupNewGameButton();
+        this.setupOverlayDismiss();
     }
     
     setupEventListeners() {
@@ -460,6 +461,14 @@ class Game2048Controller {
     setupNewGameButton() {
         this.newGameButton.addEventListener('click', () => {
             this.restartGame();
+        });
+    }
+    
+    setupOverlayDismiss() {
+        this.gameOverOverlay.addEventListener('click', (e) => {
+            if (e.target === this.gameOverOverlay) {
+                this.hideGameOverOverlay();
+            }
         });
     }
     

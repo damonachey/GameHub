@@ -344,6 +344,13 @@ class SudokuController {
                 this.handleKeyInput(event, this.selectedCell);
             }
         });
+        
+        // Click background to dismiss overlay
+        this.gameOverOverlay.addEventListener('click', (e) => {
+            if (e.target === this.gameOverOverlay) {
+                this.gameOverOverlay.style.display = 'none';
+            }
+        });
     }
 
     restartGame() {
