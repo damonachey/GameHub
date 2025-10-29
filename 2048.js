@@ -15,11 +15,11 @@ class Game2048 {
     }
     
     addRandomTile() {
-        var emptyCells = [];
+        const emptyCells = [];
         
         // Find all empty cells
-        for (var i = 0; i < 4; i++) {
-            for (var j = 0; j < 4; j++) {
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
                 if (this.grid[i][j] === 0) {
                     emptyCells.push({row: i, col: j});
                 }
@@ -27,9 +27,9 @@ class Game2048 {
         }
         
         if (emptyCells.length > 0) {
-            var randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             // 90% chance of 2, 10% chance of 4
-            var value = Math.random() < 0.9 ? 2 : 4;
+            const value = Math.random() < 0.9 ? 2 : 4;
             this.grid[randomCell.row][randomCell.col] = value;
             return true;
         }
@@ -51,8 +51,8 @@ class Game2048 {
     
     checkGameOver() {
         // Check if there are any empty cells
-        for (var i = 0; i < 4; i++) {
-            for (var j = 0; j < 4; j++) {
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
                 if (this.grid[i][j] === 0) {
                     return false; // Game not over, empty cell found
                 }
@@ -60,9 +60,9 @@ class Game2048 {
         }
         
         // Check if any moves are possible (adjacent tiles can merge)
-        for (var i = 0; i < 4; i++) {
-            for (var j = 0; j < 4; j++) {
-                var current = this.grid[i][j];
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                const current = this.grid[i][j];
                 
                 // Check right neighbor
                 if (j < 3 && current === this.grid[i][j + 1]) {
@@ -83,14 +83,14 @@ class Game2048 {
     
     // Movement methods
     moveLeft() {
-        var moved = false;
-        var newGrid = this.grid.map(row => [...row]);
+        let moved = false;
+        const newGrid = this.grid.map(row => [...row]);
         
-        for (var row = 0; row < 4; row++) {
-            var tiles = newGrid[row].filter(val => val !== 0);
+        for (let row = 0; row < 4; row++) {
+            const tiles = newGrid[row].filter(val => val !== 0);
             
             // Merge adjacent identical tiles
-            for (var i = 0; i < tiles.length - 1; i++) {
+            for (let i = 0; i < tiles.length - 1; i++) {
                 if (tiles[i] === tiles[i + 1]) {
                     tiles[i] += tiles[i + 1];
                     this.score += tiles[i];
@@ -104,7 +104,7 @@ class Game2048 {
             }
             
             // Check if row changed
-            for (var col = 0; col < 4; col++) {
+            for (let col = 0; col < 4; col++) {
                 if (this.grid[row][col] !== tiles[col]) {
                     moved = true;
                 }
@@ -122,14 +122,14 @@ class Game2048 {
     }
     
     moveRight() {
-        var moved = false;
-        var newGrid = this.grid.map(row => [...row]);
+        let moved = false;
+        const newGrid = this.grid.map(row => [...row]);
         
-        for (var row = 0; row < 4; row++) {
-            var tiles = newGrid[row].filter(val => val !== 0);
+        for (let row = 0; row < 4; row++) {
+            const tiles = newGrid[row].filter(val => val !== 0);
             
             // Merge adjacent identical tiles (from right)
-            for (var i = tiles.length - 1; i > 0; i--) {
+            for (let i = tiles.length - 1; i > 0; i--) {
                 if (tiles[i] === tiles[i - 1]) {
                     tiles[i] += tiles[i - 1];
                     this.score += tiles[i];
@@ -144,7 +144,7 @@ class Game2048 {
             }
             
             // Check if row changed
-            for (var col = 0; col < 4; col++) {
+            for (let col = 0; col < 4; col++) {
                 if (this.grid[row][col] !== tiles[col]) {
                     moved = true;
                 }
@@ -162,21 +162,21 @@ class Game2048 {
     }
     
     moveUp() {
-        var moved = false;
-        var newGrid = this.grid.map(row => [...row]);
+        let moved = false;
+        const newGrid = this.grid.map(row => [...row]);
         
-        for (var col = 0; col < 4; col++) {
-            var tiles = [];
+        for (let col = 0; col < 4; col++) {
+            const tiles = [];
             
             // Extract column
-            for (var row = 0; row < 4; row++) {
+            for (let row = 0; row < 4; row++) {
                 if (newGrid[row][col] !== 0) {
                     tiles.push(newGrid[row][col]);
                 }
             }
             
             // Merge adjacent identical tiles
-            for (var i = 0; i < tiles.length - 1; i++) {
+            for (let i = 0; i < tiles.length - 1; i++) {
                 if (tiles[i] === tiles[i + 1]) {
                     tiles[i] += tiles[i + 1];
                     this.score += tiles[i];
@@ -185,8 +185,8 @@ class Game2048 {
             }
             
             // Check if column changed and update
-            var originalColumn = [];
-            for (var row = 0; row < 4; row++) {
+            const originalColumn = [];
+            for (let row = 0; row < 4; row++) {
                 originalColumn.push(this.grid[row][col]);
             }
             
@@ -195,7 +195,7 @@ class Game2048 {
                 tiles.push(0);
             }
             
-            for (var row = 0; row < 4; row++) {
+            for (let row = 0; row < 4; row++) {
                 if (originalColumn[row] !== tiles[row]) {
                     moved = true;
                 }
@@ -212,21 +212,21 @@ class Game2048 {
     }
     
     moveDown() {
-        var moved = false;
-        var newGrid = this.grid.map(row => [...row]);
+        let moved = false;
+        const newGrid = this.grid.map(row => [...row]);
         
-        for (var col = 0; col < 4; col++) {
-            var tiles = [];
+        for (let col = 0; col < 4; col++) {
+            const tiles = [];
             
             // Extract column
-            for (var row = 0; row < 4; row++) {
+            for (let row = 0; row < 4; row++) {
                 if (newGrid[row][col] !== 0) {
                     tiles.push(newGrid[row][col]);
                 }
             }
             
             // Merge adjacent identical tiles (from bottom)
-            for (var i = tiles.length - 1; i > 0; i--) {
+            for (let i = tiles.length - 1; i > 0; i--) {
                 if (tiles[i] === tiles[i - 1]) {
                     tiles[i] += tiles[i - 1];
                     this.score += tiles[i];
@@ -236,8 +236,8 @@ class Game2048 {
             }
             
             // Check if column changed and update
-            var originalColumn = [];
-            for (var row = 0; row < 4; row++) {
+            const originalColumn = [];
+            for (let row = 0; row < 4; row++) {
                 originalColumn.push(this.grid[row][col]);
             }
             
@@ -246,7 +246,7 @@ class Game2048 {
                 tiles.unshift(0);
             }
             
-            for (var row = 0; row < 4; row++) {
+            for (let row = 0; row < 4; row++) {
                 if (originalColumn[row] !== tiles[row]) {
                     moved = true;
                 }
@@ -266,68 +266,78 @@ class Game2048 {
 // 2048 Game Renderer (View)
 class Game2048Renderer {
     constructor(gameElement) {
+        if (!gameElement) {
+            throw new Error('Game element not found');
+        }
         this.gameElement = gameElement;
+        this.tiles = [];
         this.initializeGrid();
     }
     
     initializeGrid() {
         this.gameElement.innerHTML = '';
+        this.tiles = [];
         
         // Create 16 tiles (4x4 grid)
-        for (var i = 0; i < 16; i++) {
-            var tile = document.createElement('div');
+        for (let i = 0; i < 16; i++) {
+            const tile = document.createElement('div');
             tile.className = 'tile';
             tile.id = 'tile-' + i;
             this.gameElement.appendChild(tile);
+            this.tiles.push(tile);
         }
     }
     
     render(grid) {
-        for (var row = 0; row < 4; row++) {
-            for (var col = 0; col < 4; col++) {
-                var tileIndex = row * 4 + col;
-                var tile = document.getElementById('tile-' + tileIndex);
-                var value = grid[row][col];
+        for (let row = 0; row < 4; row++) {
+            for (let col = 0; col < 4; col++) {
+                const tileIndex = row * 4 + col;
+                const tile = this.tiles[tileIndex];
+                const value = grid[row][col];
+                
+                if (!tile) {
+                    continue;
+                }
+                
+                // Remove all tile value classes
+                tile.className = 'tile';
                 
                 if (value === 0) {
                     tile.textContent = '';
-                    tile.style.backgroundColor = '#b0c4de';
                 } else {
                     tile.textContent = value;
-                    tile.style.backgroundColor = this.getTileColor(value);
+                    // Add appropriate tile class
+                    const tileClass = value > 2048 ? 'tile-higher' : `tile-${value}`;
+                    tile.classList.add(tileClass);
                 }
             }
         }
-    }
-    
-    getTileColor(value) {
-        var colors = {
-            2: '#eee4da',
-            4: '#ede0c8',
-            8: '#f2b179',
-            16: '#f59563',
-            32: '#f67c5f',
-            64: '#f65e3b',
-            128: '#edcf72',
-            256: '#edcc61',
-            512: '#edc850',
-            1024: '#edc53f',
-            2048: '#edc22e'
-        };
-        
-        return colors[value] || '#3c3a32';
     }
 }
 
 // Game Controller
 class Game2048Controller {
     constructor() {
-        this.game = new Game2048();
-        this.renderer = new Game2048Renderer(document.getElementById('game'));
+        // Check for required DOM elements
+        const gameElement = document.getElementById('game');
         this.gameOverOverlay = document.getElementById('gameOverOverlay');
         this.finalScoreElement = document.getElementById('finalScore');
         this.newGameButton = document.getElementById('newGameButton');
         this.newGameButton2 = document.getElementById('newGameButton2');
+        
+        if (!gameElement) {
+            console.error('Game element not found');
+            return;
+        }
+        
+        this.game = new Game2048();
+        this.renderer = new Game2048Renderer(gameElement);
+        
+        // Store bound event handlers for cleanup
+        this.boundKeyHandler = this.handleKeydown.bind(this);
+        this.boundTouchStart = this.handleTouchStart.bind(this);
+        this.boundTouchMove = this.handleTouchMove.bind(this);
+        this.boundTouchEnd = this.handleTouchEnd.bind(this);
         
         // Initial render
         this.renderer.render(this.game.getGrid());
@@ -339,102 +349,121 @@ class Game2048Controller {
         this.setupOverlayDismiss();
     }
     
-    setupEventListeners() {
-        // Keyboard events for desktop
-        document.addEventListener('keydown', (event) => {
-            switch(event.key) {
-                case 'ArrowUp':
-                    event.preventDefault();
-                    if (this.game.moveUp()) {
-                        this.renderer.render(this.game.getGrid());
-                        this.checkGameOver();
-                    }
-                    break;
-                case 'ArrowDown':
-                    event.preventDefault();
-                    if (this.game.moveDown()) {
-                        this.renderer.render(this.game.getGrid());
-                        this.checkGameOver();
-                    }
-                    break;
-                case 'ArrowLeft':
-                    event.preventDefault();
-                    if (this.game.moveLeft()) {
-                        this.renderer.render(this.game.getGrid());
-                        this.checkGameOver();
-                    }
-                    break;
-                case 'ArrowRight':
-                    event.preventDefault();
-                    if (this.game.moveRight()) {
-                        this.renderer.render(this.game.getGrid());
-                        this.checkGameOver();
-                    }
-                    break;
-            }
-        });
+    handleKeydown(event) {
+        switch(event.key) {
+            case 'ArrowUp':
+                event.preventDefault();
+                if (this.game.moveUp()) {
+                    this.renderer.render(this.game.getGrid());
+                    this.checkGameOver();
+                }
+                break;
+            case 'ArrowDown':
+                event.preventDefault();
+                if (this.game.moveDown()) {
+                    this.renderer.render(this.game.getGrid());
+                    this.checkGameOver();
+                }
+                break;
+            case 'ArrowLeft':
+                event.preventDefault();
+                if (this.game.moveLeft()) {
+                    this.renderer.render(this.game.getGrid());
+                    this.checkGameOver();
+                }
+                break;
+            case 'ArrowRight':
+                event.preventDefault();
+                if (this.game.moveRight()) {
+                    this.renderer.render(this.game.getGrid());
+                    this.checkGameOver();
+                }
+                break;
+        }
+    }
+    
+    handleTouchStart(event) {
+        event.preventDefault();
+        this.startX = event.touches[0].clientX;
+        this.startY = event.touches[0].clientY;
+    }
+    
+    handleTouchMove(event) {
+        event.preventDefault();
+    }
+    
+    handleTouchEnd(event) {
+        event.preventDefault();
+        if (!this.startX || !this.startY) {
+            return;
+        }
         
-        // Touch events for mobile (restricted to game container)
-        var startX, startY;
-        var gameContainer = document.querySelector('.game-container');
+        const endX = event.changedTouches[0].clientX;
+        const endY = event.changedTouches[0].clientY;
         
-        gameContainer.addEventListener('touchstart', (event) => {
-            event.preventDefault(); // Prevent page scrolling
-            
-            startX = event.touches[0].clientX;
-            startY = event.touches[0].clientY;
-        }, { passive: false });
+        const diffX = this.startX - endX;
+        const diffY = this.startY - endY;
         
-        gameContainer.addEventListener('touchmove', (event) => {
-            event.preventDefault(); // Prevent scrolling during swipe
-        }, { passive: false });
+        // Minimum swipe distance to trigger movement
+        const minSwipeDistance = 30;
         
-        gameContainer.addEventListener('touchend', (event) => {
-            event.preventDefault(); // Prevent page scrolling
-            if (!startX || !startY) return;
-            
-            var endX = event.changedTouches[0].clientX;
-            var endY = event.changedTouches[0].clientY;
-            
-            var diffX = startX - endX;
-            var diffY = startY - endY;
-            
-            // Minimum swipe distance to trigger movement (prevents accidental triggers)
-            var minSwipeDistance = 30;
-            
-            if (Math.abs(diffX) < minSwipeDistance && Math.abs(diffY) < minSwipeDistance) {
-                return; // Swipe distance too small, ignore
-            }
-            
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (diffX > 0) {
-                    if (this.game.moveLeft()) {
-                        this.renderer.render(this.game.getGrid());
-                        this.checkGameOver();
-                    }
-                } else {
-                    if (this.game.moveRight()) {
-                        this.renderer.render(this.game.getGrid());
-                        this.checkGameOver();
-                    }
+        if (Math.abs(diffX) < minSwipeDistance && Math.abs(diffY) < minSwipeDistance) {
+            return;
+        }
+        
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            if (diffX > 0) {
+                if (this.game.moveLeft()) {
+                    this.renderer.render(this.game.getGrid());
+                    this.checkGameOver();
                 }
             } else {
-                if (diffY > 0) {
-                    if (this.game.moveUp()) {
-                        this.renderer.render(this.game.getGrid());
-                        this.checkGameOver();
-                    }
-                } else {
-                    if (this.game.moveDown()) {
-                        this.renderer.render(this.game.getGrid());
-                        this.checkGameOver();
-                    }
+                if (this.game.moveRight()) {
+                    this.renderer.render(this.game.getGrid());
+                    this.checkGameOver();
                 }
             }
-            
-            startX = null;
-            startY = null;
-        }, { passive: false });
+        } else {
+            if (diffY > 0) {
+                if (this.game.moveUp()) {
+                    this.renderer.render(this.game.getGrid());
+                    this.checkGameOver();
+                }
+            } else {
+                if (this.game.moveDown()) {
+                    this.renderer.render(this.game.getGrid());
+                    this.checkGameOver();
+                }
+            }
+        }
+        
+        this.startX = null;
+        this.startY = null;
+    }
+    
+    setupEventListeners() {
+        // Keyboard events for desktop
+        document.addEventListener('keydown', this.boundKeyHandler);
+        
+        // Touch events for mobile (restricted to game container)
+        const gameContainer = document.querySelector('.game-container');
+        if (gameContainer) {
+            gameContainer.addEventListener('touchstart', this.boundTouchStart, { passive: false });
+            gameContainer.addEventListener('touchmove', this.boundTouchMove, { passive: false });
+            gameContainer.addEventListener('touchend', this.boundTouchEnd, { passive: false });
+        }
+    }
+    
+    cleanup() {
+        // Remove event listeners to prevent memory leaks
+        document.removeEventListener('keydown', this.boundKeyHandler);
+        
+        const gameContainer = document.querySelector('.game-container');
+        if (gameContainer) {
+            gameContainer.removeEventListener('touchstart', this.boundTouchStart);
+            gameContainer.removeEventListener('touchmove', this.boundTouchMove);
+            gameContainer.removeEventListener('touchend', this.boundTouchEnd);
+        }
     }
     
     checkGameOver() {
@@ -444,32 +473,44 @@ class Game2048Controller {
     }
     
     showGameOverOverlay() {
-        this.finalScoreElement.textContent = `Final Score: ${this.game.getScore()}`;
-        this.gameOverOverlay.style.display = 'flex';
+        if (this.finalScoreElement) {
+            this.finalScoreElement.textContent = `Final Score: ${this.game.getScore()}`;
+        }
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.style.display = 'flex';
+        }
     }
     
     hideGameOverOverlay() {
-        this.gameOverOverlay.style.display = 'none';
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.style.display = 'none';
+        }
     }
     
     setupRestartButton() {
-        this.newGameButton2.addEventListener('click', () => {
-            this.restartGame();
-        });
+        if (this.newGameButton2) {
+            this.newGameButton2.addEventListener('click', () => {
+                this.restartGame();
+            });
+        }
     }
     
     setupNewGameButton() {
-        this.newGameButton.addEventListener('click', () => {
-            this.restartGame();
-        });
+        if (this.newGameButton) {
+            this.newGameButton.addEventListener('click', () => {
+                this.restartGame();
+            });
+        }
     }
     
     setupOverlayDismiss() {
-        this.gameOverOverlay.addEventListener('click', (e) => {
-            if (e.target === this.gameOverOverlay) {
-                this.hideGameOverOverlay();
-            }
-        });
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.addEventListener('click', (e) => {
+                if (e.target === this.gameOverOverlay) {
+                    this.hideGameOverOverlay();
+                }
+            });
+        }
     }
     
     restartGame() {
