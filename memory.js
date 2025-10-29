@@ -30,20 +30,26 @@ class MemoryGame {
     }
     
     setupEventListeners() {
-        this.newGameButton.addEventListener('click', () => {
-            this.initializeGame();
-        });
+        if (this.newGameButton) {
+            this.newGameButton.addEventListener('click', () => {
+                this.initializeGame();
+            });
+        }
         
-        this.newGameButton2.addEventListener('click', () => {
-            this.initializeGame();
-        });
+        if (this.newGameButton2) {
+            this.newGameButton2.addEventListener('click', () => {
+                this.initializeGame();
+            });
+        }
         
         // Click background to dismiss overlay
-        this.gameOverOverlay.addEventListener('click', (e) => {
-            if (e.target === this.gameOverOverlay) {
-                this.hideGameOverOverlay();
-            }
-        });
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.addEventListener('click', (e) => {
+                if (e.target === this.gameOverOverlay) {
+                    this.hideGameOverOverlay();
+                }
+            });
+        }
     }
     
     initializeGame() {
@@ -72,7 +78,7 @@ class MemoryGame {
     
     createCards() {
         // Create pairs of letters
-        for (let letter of this.letters) {
+        for (const letter of this.letters) {
             this.cards.push({ letter: letter, id: `${letter}_1`, flipped: false, matched: false });
             this.cards.push({ letter: letter, id: `${letter}_2`, flipped: false, matched: false });
         }
@@ -106,7 +112,9 @@ class MemoryGame {
     }
     
     flipCard(index) {
-        if (this.gameEnded) return;
+        if (this.gameEnded) {
+            return;
+        }
         
         const card = this.cards[index];
         const cardElement = this.memoryGrid.children[index];
@@ -187,7 +195,9 @@ class MemoryGame {
     }
     
     updateTimer() {
-        if (!this.startTime) return;
+        if (!this.startTime || !this.timer) {
+            return;
+        }
         
         const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
         const minutes = Math.floor(elapsed / 60);
@@ -198,8 +208,12 @@ class MemoryGame {
     }
     
     updateUI() {
-        this.movesCount.textContent = this.moves;
-        this.matchesCount.textContent = `${this.matchedPairs} / ${this.letters.length}`;
+        if (this.movesCount) {
+            this.movesCount.textContent = this.moves;
+        }
+        if (this.matchesCount) {
+            this.matchesCount.textContent = `${this.matchedPairs} / ${this.letters.length}`;
+        }
     }
     
     endGame() {
@@ -216,8 +230,12 @@ class MemoryGame {
         const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         
         // Update game over overlay
-        this.gameOverTime.textContent = `Time: ${timeString}`;
-        this.finalMoves.textContent = this.moves;
+        if (this.gameOverTime) {
+            this.gameOverTime.textContent = `Time: ${timeString}`;
+        }
+        if (this.finalMoves) {
+            this.finalMoves.textContent = this.moves;
+        }
         
         // Show overlay after a brief delay
         setTimeout(() => {
@@ -226,11 +244,23 @@ class MemoryGame {
     }
     
     showGameOverOverlay() {
-        this.gameOverOverlay.style.display = 'flex';
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.style.display = 'flex';
+        }
     }
     
     hideGameOverOverlay() {
-        this.gameOverOverlay.style.display = 'none';
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.style.display = 'none';
+        }
+    }
+    
+    cleanup() {
+        // Clean up timer interval
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
     }
 }
 

@@ -3,6 +3,7 @@ class Minesweeper {
         this.GRID_SIZE = 16;
         this.MINE_COUNT = 40;
         this.grid = [];
+        this.cellElements = []; // Cache DOM elements
         this.gameBoard = document.getElementById('game-board');
         this.mineCountDisplay = document.getElementById('mine-count');
         this.gameOverlay = document.getElementById('game-over-overlay');
@@ -14,6 +15,10 @@ class Minesweeper {
         this.gameState = 'playing'; // 'playing', 'won', 'lost'
         this.flaggedMines = 0;
         this.revealedCells = 0;
+        
+        // Store bound event handlers
+        this.boundCellClick = this.handleCellClick.bind(this);
+        this.boundRightClick = this.handleRightClick.bind(this);
         
         this.initializeGame();
         this.setupEventListeners();
@@ -33,9 +38,9 @@ class Minesweeper {
     
     createGrid() {
         this.grid = [];
-        for (var i = 0; i < this.GRID_SIZE; i++) {
+        for (let i = 0; i < this.GRID_SIZE; i++) {
             this.grid[i] = [];
-            for (var j = 0; j < this.GRID_SIZE; j++) {
+            for (let j = 0; j < this.GRID_SIZE; j++) {
                 this.grid[i][j] = {
                     isMine: false,
                     isRevealed: false,
@@ -49,10 +54,10 @@ class Minesweeper {
     }
     
     placeMines() {
-        var minesPlaced = 0;
+        let minesPlaced = 0;
         while (minesPlaced < this.MINE_COUNT) {
-            var row = Math.floor(Math.random() * this.GRID_SIZE);
-            var col = Math.floor(Math.random() * this.GRID_SIZE);
+            const row = Math.floor(Math.random() * this.GRID_SIZE);
+            const col = Math.floor(Math.random() * this.GRID_SIZE);
             
             if (!this.grid[row][col].isMine) {
                 this.grid[row][col].isMine = true;
@@ -62,8 +67,8 @@ class Minesweeper {
     }
     
     calculateNumbers() {
-        for (var i = 0; i < this.GRID_SIZE; i++) {
-            for (var j = 0; j < this.GRID_SIZE; j++) {
+        for (let i = 0; i < this.GRID_SIZE; i++) {
+            for (let j = 0; j < this.GRID_SIZE; j++) {
                 if (!this.grid[i][j].isMine) {
                     this.grid[i][j].adjacentMines = this.countAdjacentMines(i, j);
                 }
@@ -72,11 +77,11 @@ class Minesweeper {
     }
     
     countAdjacentMines(row, col) {
-        var count = 0;
-        for (var i = -1; i <= 1; i++) {
-            for (var j = -1; j <= 1; j++) {
-                var newRow = row + i;
-                var newCol = col + j;
+        let count = 0;
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                const newRow = row + i;
+                const newCol = col + j;
                 
                 if (newRow >= 0 && newRow < this.GRID_SIZE && 
                     newCol >= 0 && newCol < this.GRID_SIZE && 
@@ -89,23 +94,37 @@ class Minesweeper {
     }
     
     renderBoard() {
+        if (!this.gameBoard) {
+            return;
+        }
         this.gameBoard.innerHTML = '';
+        this.cellElements = [];
         
-        for (var i = 0; i < this.GRID_SIZE; i++) {
-            for (var j = 0; j < this.GRID_SIZE; j++) {
-                var cell = this.createCellElement(i, j);
+        for (let i = 0; i < this.GRID_SIZE; i++) {
+            for (let j = 0; j < this.GRID_SIZE; j++) {
+                const cell = this.createCellElement(i, j);
                 this.gameBoard.appendChild(cell);
+                this.cellElements.push(cell);
             }
         }
     }
     
     createCellElement(row, col) {
-        var cell = document.createElement('div');
+        const cell = document.createElement('div');
         cell.className = 'cell';
         cell.dataset.row = row;
         cell.dataset.col = col;
         
-        var cellData = this.grid[row][col];
+        this.updateCellElement(cell, row, col);
+        return cell;
+    }
+    
+    updateCellElement(cell, row, col) {
+        const cellData = this.grid[row][col];
+        
+        // Reset classes
+        cell.className = 'cell';
+        cell.textContent = '';
         
         if (cellData.isRevealed) {
             cell.classList.add('revealed');
@@ -124,48 +143,78 @@ class Minesweeper {
             cell.classList.add('flagged');
             cell.textContent = '🚩';
         }
-        
-        return cell;
     }
     
     setupEventListeners() {
-        this.gameBoard.addEventListener('click', (e) => this.handleCellClick(e));
-        this.gameBoard.addEventListener('contextmenu', (e) => this.handleRightClick(e));
-        this.newGameButton.addEventListener('click', () => this.initializeGame());
-        this.newGameButton2.addEventListener('click', () => this.initializeGame());
-        this.gameOverlay.addEventListener('click', (e) => {
-            if (e.target === this.gameOverlay) {
-                this.hideOverlay();
-            }
-        });
+        if (this.gameBoard) {
+            this.gameBoard.addEventListener('click', this.boundCellClick);
+            this.gameBoard.addEventListener('contextmenu', this.boundRightClick);
+        }
+        if (this.newGameButton) {
+            this.newGameButton.addEventListener('click', () => this.initializeGame());
+        }
+        if (this.newGameButton2) {
+            this.newGameButton2.addEventListener('click', () => this.initializeGame());
+        }
+        if (this.gameOverlay) {
+            this.gameOverlay.addEventListener('click', (e) => {
+                if (e.target === this.gameOverlay) {
+                    this.hideOverlay();
+                }
+            });
+        }
+    }
+    
+    cleanup() {
+        // Remove event listeners
+        if (this.gameBoard) {
+            this.gameBoard.removeEventListener('click', this.boundCellClick);
+            this.gameBoard.removeEventListener('contextmenu', this.boundRightClick);
+        }
     }
     
     updateMineCounter() {
-        this.mineCountDisplay.textContent = this.MINE_COUNT - this.flaggedMines;
+        if (this.mineCountDisplay) {
+            this.mineCountDisplay.textContent = this.MINE_COUNT - this.flaggedMines;
+        }
     }
     
     showOverlay(title, message, isWin = false) {
-        this.overlayTitle.textContent = title;
-        this.overlayMessage.textContent = message;
-        this.overlayTitle.className = isWin ? 'game-over-title win' : 'game-over-title lose';
-        this.gameOverlay.style.display = 'flex';
+        if (this.overlayTitle) {
+            this.overlayTitle.textContent = title;
+            this.overlayTitle.className = isWin ? 'game-over-title win' : 'game-over-title lose';
+        }
+        if (this.overlayMessage) {
+            this.overlayMessage.textContent = message;
+        }
+        if (this.gameOverlay) {
+            this.gameOverlay.style.display = 'flex';
+        }
     }
     
     hideOverlay() {
-        this.gameOverlay.style.display = 'none';
+        if (this.gameOverlay) {
+            this.gameOverlay.style.display = 'none';
+        }
     }
     
     handleCellClick(e) {
-        if (this.gameState !== 'playing') return;
+        if (this.gameState !== 'playing') {
+            return;
+        }
         
-        var target = e.target;
-        if (!target.classList.contains('cell')) return;
+        const target = e.target;
+        if (!target.classList.contains('cell')) {
+            return;
+        }
         
-        var row = parseInt(target.dataset.row);
-        var col = parseInt(target.dataset.col);
-        var cell = this.grid[row][col];
+        const row = parseInt(target.dataset.row);
+        const col = parseInt(target.dataset.col);
+        const cell = this.grid[row][col];
         
-        if (cell.isFlagged || cell.isRevealed) return;
+        if (cell.isFlagged || cell.isRevealed) {
+            return;
+        }
         
         this.revealCell(row, col);
     }
@@ -173,22 +222,28 @@ class Minesweeper {
     handleRightClick(e) {
         e.preventDefault();
         
-        if (this.gameState !== 'playing') return;
+        if (this.gameState !== 'playing') {
+            return;
+        }
         
-        var target = e.target;
-        if (!target.classList.contains('cell')) return;
+        const target = e.target;
+        if (!target.classList.contains('cell')) {
+            return;
+        }
         
-        var row = parseInt(target.dataset.row);
-        var col = parseInt(target.dataset.col);
-        var cell = this.grid[row][col];
+        const row = parseInt(target.dataset.row);
+        const col = parseInt(target.dataset.col);
+        const cell = this.grid[row][col];
         
-        if (cell.isRevealed) return;
+        if (cell.isRevealed) {
+            return;
+        }
         
         this.toggleFlag(row, col);
     }
     
     toggleFlag(row, col) {
-        var cell = this.grid[row][col];
+        const cell = this.grid[row][col];
         
         if (cell.isFlagged) {
             cell.isFlagged = false;
@@ -199,16 +254,28 @@ class Minesweeper {
         }
         
         this.updateMineCounter();
-        this.renderBoard();
+        // Update only this cell instead of re-rendering entire board
+        const cellIndex = row * this.GRID_SIZE + col;
+        if (this.cellElements[cellIndex]) {
+            this.updateCellElement(this.cellElements[cellIndex], row, col);
+        }
     }
     
     revealCell(row, col) {
-        var cell = this.grid[row][col];
+        const cell = this.grid[row][col];
         
-        if (cell.isRevealed || cell.isFlagged) return;
+        if (cell.isRevealed || cell.isFlagged) {
+            return;
+        }
         
         cell.isRevealed = true;
         this.revealedCells++;
+        
+        // Update only this cell
+        const cellIndex = row * this.GRID_SIZE + col;
+        if (this.cellElements[cellIndex]) {
+            this.updateCellElement(this.cellElements[cellIndex], row, col);
+        }
         
         if (cell.isMine) {
             cell.exploded = true;
@@ -221,7 +288,6 @@ class Minesweeper {
             this.revealAdjacentCells(row, col);
         }
         
-        this.renderBoard();
         this.checkWinCondition();
     }
     
@@ -229,15 +295,13 @@ class Minesweeper {
         this.gameState = isWin ? 'won' : 'lost';
         
         if (!isWin) {
-            // Show explosion animation first, then reveal all mines
-            this.renderBoard();
             setTimeout(() => {
                 this.revealAllMines();
             }, 300);
         }
         
-        var title = isWin ? 'Winner' : 'Game Over';
-        var message = isWin ? 'You found all the mines!' : 'You hit a mine!';
+        const title = isWin ? 'Winner' : 'Game Over';
+        const message = isWin ? 'You found all the mines!' : 'You hit a mine!';
         
         setTimeout(() => {
             this.showOverlay(title, message, isWin);
@@ -245,19 +309,22 @@ class Minesweeper {
     }
     
     revealAllMines() {
-        for (var i = 0; i < this.GRID_SIZE; i++) {
-            for (var j = 0; j < this.GRID_SIZE; j++) {
+        for (let i = 0; i < this.GRID_SIZE; i++) {
+            for (let j = 0; j < this.GRID_SIZE; j++) {
                 if (this.grid[i][j].isMine) {
                     this.grid[i][j].isRevealed = true;
+                    const cellIndex = i * this.GRID_SIZE + j;
+                    if (this.cellElements[cellIndex]) {
+                        this.updateCellElement(this.cellElements[cellIndex], i, j);
+                    }
                 }
             }
         }
-        this.renderBoard();
     }
     
     checkWinCondition() {
-        var totalCells = this.GRID_SIZE * this.GRID_SIZE;
-        var cellsToReveal = totalCells - this.MINE_COUNT;
+        const totalCells = this.GRID_SIZE * this.GRID_SIZE;
+        const cellsToReveal = totalCells - this.MINE_COUNT;
         
         if (this.revealedCells === cellsToReveal) {
             this.gameOver(true);
@@ -265,10 +332,10 @@ class Minesweeper {
     }
     
     revealAdjacentCells(row, col) {
-        for (var i = -1; i <= 1; i++) {
-            for (var j = -1; j <= 1; j++) {
-                var newRow = row + i;
-                var newCol = col + j;
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                const newRow = row + i;
+                const newCol = col + j;
                 
                 if (newRow >= 0 && newRow < this.GRID_SIZE && 
                     newCol >= 0 && newCol < this.GRID_SIZE && 
@@ -277,6 +344,12 @@ class Minesweeper {
                     
                     this.grid[newRow][newCol].isRevealed = true;
                     this.revealedCells++;
+                    
+                    // Update the cell element
+                    const cellIndex = newRow * this.GRID_SIZE + newCol;
+                    if (this.cellElements[cellIndex]) {
+                        this.updateCellElement(this.cellElements[cellIndex], newRow, newCol);
+                    }
                     
                     // If this adjacent cell also has no adjacent mines, continue revealing
                     if (this.grid[newRow][newCol].adjacentMines === 0) {

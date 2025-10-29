@@ -22,6 +22,9 @@ class HangmanGame {
 
         // Hangman parts
         this.hangmanParts = ['head', 'body', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
+        
+        // Store bound event handlers for cleanup
+        this.boundKeyHandler = this.handleKeydown.bind(this);
 
         this.loadWords();
         this.setupEventListeners();
@@ -73,9 +76,10 @@ class HangmanGame {
 
     createAlphabet() {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        
         this.alphabetContainer.innerHTML = '';
 
-        for (let letter of alphabet) {
+        for (const letter of alphabet) {
             const button = document.createElement('button');
             button.className = 'letter-button';
             button.textContent = letter;
@@ -121,7 +125,7 @@ class HangmanGame {
 
     updateWordDisplay() {
         let display = '';
-        for (let letter of this.currentWord) {
+        for (const letter of this.currentWord) {
             if (this.guessedLetters.includes(letter)) {
                 display += letter + ' ';
             } else {
@@ -132,7 +136,9 @@ class HangmanGame {
     }
 
     updateRemainingGuesses() {
-        this.remainingGuesses.textContent = this.maxWrongGuesses - this.wrongGuesses;
+        if (this.remainingGuesses) {
+            this.remainingGuesses.textContent = this.maxWrongGuesses - this.wrongGuesses;
+        }
     }
 
     updateGuessedLetters() {
@@ -181,45 +187,65 @@ class HangmanGame {
     }
 
     showGameOverOverlay(won) {
-        if (won) {
-            this.gameOverTitle.textContent = 'Winner';
-            this.gameOverTitle.className = 'game-over-title win';
-            this.gameOverWord.textContent = `The word was: ${this.currentWord}`;
-        } else {
-            this.gameOverTitle.textContent = 'Game Over';
-            this.gameOverTitle.className = 'game-over-title lose';
+        if (this.gameOverTitle) {
+            if (won) {
+                this.gameOverTitle.textContent = 'Winner';
+                this.gameOverTitle.className = 'game-over-title win';
+            } else {
+                this.gameOverTitle.textContent = 'Game Over';
+                this.gameOverTitle.className = 'game-over-title lose';
+            }
+        }
+        if (this.gameOverWord) {
             this.gameOverWord.textContent = `The word was: ${this.currentWord}`;
         }
-        this.gameOverOverlay.style.display = 'flex';
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.style.display = 'flex';
+        }
     }
 
     hideGameOverOverlay() {
-        this.gameOverOverlay.style.display = 'none';
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.style.display = 'none';
+        }
     }
 
+    handleKeydown(event) {
+        const letter = event.key.toUpperCase();
+        if (letter >= 'A' && letter <= 'Z') {
+            this.guessLetter(letter);
+        }
+    }
+    
     setupEventListeners() {
-        this.newGameButton.addEventListener('click', () => {
-            this.startNewGame();
-        });
+        if (this.newGameButton) {
+            this.newGameButton.addEventListener('click', () => {
+                this.startNewGame();
+            });
+        }
 
-        this.newGameButton2.addEventListener('click', () => {
-            this.startNewGame();
-        });
+        if (this.newGameButton2) {
+            this.newGameButton2.addEventListener('click', () => {
+                this.startNewGame();
+            });
+        }
 
         // Keyboard support
-        document.addEventListener('keydown', (event) => {
-            const letter = event.key.toUpperCase();
-            if (letter >= 'A' && letter <= 'Z') {
-                this.guessLetter(letter);
-            }
-        });
+        document.addEventListener('keydown', this.boundKeyHandler);
         
         // Click background to dismiss overlay
-        this.gameOverOverlay.addEventListener('click', (e) => {
-            if (e.target === this.gameOverOverlay) {
-                this.hideGameOverOverlay();
-            }
-        });
+        if (this.gameOverOverlay) {
+            this.gameOverOverlay.addEventListener('click', (e) => {
+                if (e.target === this.gameOverOverlay) {
+                    this.hideGameOverOverlay();
+                }
+            });
+        }
+    }
+    
+    cleanup() {
+        // Remove event listeners to prevent memory leaks
+        document.removeEventListener('keydown', this.boundKeyHandler);
     }
 }
 
