@@ -21,6 +21,7 @@ Design philosophy is that these games should be playable in a web browser, entir
 - **Hangman**: A word guessing game where you try to figure out the hidden word before running out of attempts.
 - **Memory**: A card matching game where you try to find pairs of matching cards.
 - **Minesweeper**: Clear a minefield without detonating any mines.
+- **Sliding Numbers**: A sliding puzzle game where you arrange numbered tiles in order.
 - **Snake**: A classic arcade game where you control a snake to eat food and grow longer.
 - **Solitaire (Klondike)**: A card game where you try to arrange cards in a specific order.
 - **Sudoku**: A number puzzle game that challenges your logic and reasoning skills.

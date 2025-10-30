@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Sliding Numbers</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="sliding-numbers.css">
+</head>
+<body>
+    <h1><a href="index.html">GAME HUB</a></h1>
+    <div class="section-header">Sliding Numbers</div>
+
+    <div class="game-container">
+        <div class="game-info">
+            <div class="info-item">
+                <div class="info-label">Moves</div>
+                <div id="moves" class="info-value">0</div>
+            </div>
+        </div>
+
+        <div id="game">
+            <!-- Game tiles will be inserted here -->
+        </div>
+        
+        <!-- New Game Button -->
+        <button id="newGameButton" class="game-button new-game-button">New Game</button>
+        
+        <div id="instructions">
+            Use ↑ ↓ ← → to slide tiles on desktop. Swipe or tap tiles to slide on mobile.
+        </div>
+    </div>
+
+    <!-- Win Overlay -->
+    <div id="winOverlay" class="game-over-overlay">
+        <div class="game-over-content">
+            <div class="game-over-title">You Win!</div>
+            <div id="finalMoves" class="game-over-score">Moves: 0</div>
+            <button id="newGameButton2" class="game-button restart-button">Play Again</button>
+        </div>
+    </div>
+
+    <script src="sliding-numbers.js"></script>
+</body>
+</html>
