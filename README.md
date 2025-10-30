@@ -26,7 +26,6 @@ Design philosophy is that these games should be playable in a web browser, entir
 - **Solitaire (Klondike)**: A card game where you try to arrange cards in a specific order.
 - **Sudoku**: A number puzzle game that challenges your logic and reasoning skills.
 - **Tetris**: A classic puzzle game where you fit falling blocks together to clear lines.
-- **Unblock Me**: A sliding block puzzle game where you try to move a red block out of a grid by sliding other blocks around.
 
 ### Two Player Games
 - **Backgammon**: A classic board game where players move pieces around the board based on dice rolls.
