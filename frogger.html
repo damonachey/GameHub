@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Frogger</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="frogger.css">
+</head>
+<body>
+    <h1><a href="index.html">GAME HUB</a></h1>
+    <div class="section-header">Frogger</div>
+
+    <div class="game-container">
+        <div class="game-info">
+            <div class="info-item">
+                <div class="info-label">Score</div>
+                <div id="score" class="info-value">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Lives</div>
+                <div id="lives" class="info-value">3</div>
+            </div>
+        </div>
+
+        <div id="game">
+            <!-- Game grid will be inserted here -->
+        </div>
+        
+        <button id="newGameButton" class="game-button new-game-button">New Game</button>
+        
+        <div id="instructions">
+            Use ↑ ↓ ← → to move the frog. Avoid cars and reach the top!
+        </div>
+    </div>
+
+    <!-- Success Overlay -->
+    <div id="successOverlay" class="game-over-overlay">
+        <div class="game-over-content">
+            <div class="game-over-title">Success!</div>
+            <div class="game-over-score">You made it across!</div>
+            <button id="continueButton" class="game-button restart-button">New Game</button>
+        </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameOverOverlay" class="game-over-overlay">
+        <div class="game-over-content">
+            <div class="game-over-title">Game Over</div>
+            <div id="finalScore" class="game-over-score">Score: 0</div>
+            <button id="newGameButton2" class="game-button restart-button">Play Again</button>
+        </div>
+    </div>
+
+    <script src="frogger.js"></script>
+</body>
+</html>

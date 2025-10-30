@@ -1,0 +1,90 @@
+/* Frogger Game CSS */
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.game-info {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 15px;
+}
+
+.info-item { text-align: center; }
+.info-label { font-size: 0.9rem; color: #666; }
+.info-value { font-size: 1.4rem; font-weight: bold; }
+
+#game {
+    display: grid;
+    grid-template-columns: repeat(13, 40px);
+    grid-template-rows: repeat(13, 40px);
+    gap: 0;
+    border: 3px solid #333;
+    background-color: #1a1a1a;
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    position: relative;
+    line-height: 1;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Ensure text content is above backgrounds */
+.cell > * {
+    position: relative;
+    z-index: 5;
+}
+
+/* Lane types */
+.cell.safe-top { background-color: #90ee90; }
+.cell.water { background-color: #4169e1; }
+.cell.safe-middle { background-color: #90ee90; }
+.cell.road { background-color: #555; }
+.cell.safe-bottom { background-color: #90ee90; }
+
+/* Game entities */
+.frog { 
+    position: absolute;
+    z-index: 20;
+}
+
+.car {
+    position: absolute;
+    z-index: 5;
+}
+
+.cell.log {
+    background: linear-gradient(180deg, #a0682a 0%, #8b4513 50%, #a0682a 100%);
+    border: 2px solid #654321;
+    border-radius: 4px;
+    box-shadow: inset 0 2px 4px rgba(101, 67, 33, 0.3);
+}
+
+.new-game-button { margin-top: 16px; }
+#instructions { margin-top: 12px; text-align: center; max-width: 520px; }
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    #game {
+        grid-template-columns: repeat(13, 32px);
+        grid-template-rows: repeat(13, 32px);
+    }
+    .cell { width: 32px; height: 32px; font-size: 20px; }
+}
+
+@media (max-width: 480px) {
+    #game {
+        grid-template-columns: repeat(13, 24px);
+        grid-template-rows: repeat(13, 24px);
+    }
+    .cell { width: 24px; height: 24px; font-size: 16px; }
+}
