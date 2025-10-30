@@ -4,6 +4,7 @@ class Game2048 {
         this.grid = this.createEmptyGrid();
         this.score = 0;
         this.gameOver = false;
+        this.won = false;
         
         // Add two initial tiles
         this.addRandomTile();
@@ -47,6 +48,26 @@ class Game2048 {
     
     isGameOver() {
         return this.gameOver;
+    }
+    
+    hasWon() {
+        return this.won;
+    }
+    
+    checkWin() {
+        if (this.won) {
+            return false; // Already won
+        }
+        
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                if (this.grid[i][j] === 2048) {
+                    this.won = true;
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     
     checkGameOver() {
@@ -321,9 +342,12 @@ class Game2048Controller {
         // Check for required DOM elements
         const gameElement = document.getElementById('game');
         this.gameOverOverlay = document.getElementById('gameOverOverlay');
+        this.successOverlay = document.getElementById('successOverlay');
         this.finalScoreElement = document.getElementById('finalScore');
         this.newGameButton = document.getElementById('newGameButton');
         this.newGameButton2 = document.getElementById('newGameButton2');
+        this.newGameButton3 = document.getElementById('newGameButton3');
+        this.continueButton = document.getElementById('continueButton');
         
         if (!gameElement) {
             console.error('Game element not found');
@@ -344,8 +368,9 @@ class Game2048Controller {
         
         // Set up event listeners
         this.setupEventListeners();
-        this.setupRestartButton();
+        this.setupRestartButtons();
         this.setupNewGameButton();
+        this.setupContinueButton();
         this.setupOverlayDismiss();
     }
     
@@ -355,6 +380,7 @@ class Game2048Controller {
                 event.preventDefault();
                 if (this.game.moveUp()) {
                     this.renderer.render(this.game.getGrid());
+                    this.checkWin();
                     this.checkGameOver();
                 }
                 break;
@@ -362,6 +388,7 @@ class Game2048Controller {
                 event.preventDefault();
                 if (this.game.moveDown()) {
                     this.renderer.render(this.game.getGrid());
+                    this.checkWin();
                     this.checkGameOver();
                 }
                 break;
@@ -369,6 +396,7 @@ class Game2048Controller {
                 event.preventDefault();
                 if (this.game.moveLeft()) {
                     this.renderer.render(this.game.getGrid());
+                    this.checkWin();
                     this.checkGameOver();
                 }
                 break;
@@ -376,6 +404,7 @@ class Game2048Controller {
                 event.preventDefault();
                 if (this.game.moveRight()) {
                     this.renderer.render(this.game.getGrid());
+                    this.checkWin();
                     this.checkGameOver();
                 }
                 break;
@@ -415,11 +444,13 @@ class Game2048Controller {
             if (diffX > 0) {
                 if (this.game.moveLeft()) {
                     this.renderer.render(this.game.getGrid());
+                    this.checkWin();
                     this.checkGameOver();
                 }
             } else {
                 if (this.game.moveRight()) {
                     this.renderer.render(this.game.getGrid());
+                    this.checkWin();
                     this.checkGameOver();
                 }
             }
@@ -427,11 +458,13 @@ class Game2048Controller {
             if (diffY > 0) {
                 if (this.game.moveUp()) {
                     this.renderer.render(this.game.getGrid());
+                    this.checkWin();
                     this.checkGameOver();
                 }
             } else {
                 if (this.game.moveDown()) {
                     this.renderer.render(this.game.getGrid());
+                    this.checkWin();
                     this.checkGameOver();
                 }
             }
@@ -466,9 +499,27 @@ class Game2048Controller {
         }
     }
     
+    checkWin() {
+        if (this.game.checkWin()) {
+            this.showSuccessOverlay();
+        }
+    }
+    
     checkGameOver() {
         if (this.game.checkGameOver()) {
             this.showGameOverOverlay();
+        }
+    }
+    
+    showSuccessOverlay() {
+        if (this.successOverlay) {
+            this.successOverlay.style.display = 'flex';
+        }
+    }
+    
+    hideSuccessOverlay() {
+        if (this.successOverlay) {
+            this.successOverlay.style.display = 'none';
         }
     }
     
@@ -487,10 +538,23 @@ class Game2048Controller {
         }
     }
     
-    setupRestartButton() {
+    setupRestartButtons() {
         if (this.newGameButton2) {
             this.newGameButton2.addEventListener('click', () => {
                 this.restartGame();
+            });
+        }
+        if (this.newGameButton3) {
+            this.newGameButton3.addEventListener('click', () => {
+                this.restartGame();
+            });
+        }
+    }
+    
+    setupContinueButton() {
+        if (this.continueButton) {
+            this.continueButton.addEventListener('click', () => {
+                this.hideSuccessOverlay();
             });
         }
     }
@@ -511,6 +575,13 @@ class Game2048Controller {
                 }
             });
         }
+        if (this.successOverlay) {
+            this.successOverlay.addEventListener('click', (e) => {
+                if (e.target === this.successOverlay) {
+                    this.hideSuccessOverlay();
+                }
+            });
+        }
     }
     
     restartGame() {
@@ -520,8 +591,9 @@ class Game2048Controller {
         // Re-render the grid
         this.renderer.render(this.game.getGrid());
         
-        // Hide the overlay
+        // Hide overlays
         this.hideGameOverOverlay();
+        this.hideSuccessOverlay();
     }
 }
 

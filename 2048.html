@@ -24,12 +24,24 @@
         </div>
     </div>
 
+    <!-- Success Overlay -->
+    <div id="successOverlay" class="game-over-overlay">
+        <div class="game-over-content">
+            <div class="game-over-title">Success!</div>
+            <div class="game-over-score">You reached 2048!</div>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button id="newGameButton2" class="game-button restart-button">New Game</button>
+                <button id="continueButton" class="game-button restart-button">Continue</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Game Over Overlay -->
     <div id="gameOverOverlay" class="game-over-overlay">
         <div class="game-over-content">
             <div class="game-over-title">Game Over</div>
             <div id="finalScore" class="game-over-score">Final Score: 0</div>
-            <button id="newGameButton2" class="game-button restart-button">Play Again</button>
+            <button id="newGameButton3" class="game-button restart-button">Play Again</button>
         </div>
     </div>
 
