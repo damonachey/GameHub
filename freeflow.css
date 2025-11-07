@@ -8,8 +8,8 @@
 
 #game {
     display: grid;
-    grid-template-columns: repeat(6, 50px);
-    grid-template-rows: repeat(6, 50px);
+    grid-template-columns: repeat(7, 50px);
+    grid-template-rows: repeat(7, 50px);
     gap: 1px;
     background-color: #2f4f4f;
     padding: 4px;
@@ -40,6 +40,18 @@
     border: 2px solid #4a90e2;
 }
 
+.dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .game-buttons {
     display: flex;
     gap: 15px;
@@ -63,8 +75,8 @@
     }
 
     #game {
-        grid-template-columns: repeat(6, 45px);
-        grid-template-rows: repeat(6, 45px);
+        grid-template-columns: repeat(7, 45px);
+        grid-template-rows: repeat(7, 45px);
     }
 
     .cell {
@@ -80,8 +92,8 @@
 
 @media (max-width: 480px) {
     #game {
-        grid-template-columns: repeat(6, 40px);
-        grid-template-rows: repeat(6, 40px);
+        grid-template-columns: repeat(7, 40px);
+        grid-template-rows: repeat(7, 40px);
     }
 
     .cell {
