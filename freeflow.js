@@ -265,12 +265,15 @@ class FreeFlowRenderer {
         }
     }
     
-    render(game) {
+    render(game, startingBoard) {
         // Clear all cells
         this.cells.forEach(cell => {
             cell.innerHTML = '';
             cell.style.backgroundColor = '';
         });
+        
+        var directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // up, down, left, right
+        var lineWidth = 15; // Half of dot diameter
         
         // Render grid
         for (var row = 0; row < game.rows; row++) {
@@ -280,11 +283,88 @@ class FreeFlowRenderer {
                     var cellIndex = row * this.cols + col;
                     var cell = this.cells[cellIndex];
                     
-                    if (cell) {
+                    if (!cell) {
+                        continue;
+                    }
+                    
+                    // Check if this is an endpoint (from starting board)
+                    var isEndpoint = false;
+                    if (startingBoard && startingBoard.grid[row][col] === color) {
+                        isEndpoint = true;
+                    }
+                    
+                    // Count connections to same-colored neighbors
+                    var connections = [];
+                    for (var i = 0; i < directions.length; i++) {
+                        var dr = directions[i][0];
+                        var dc = directions[i][1];
+                        var nr = row + dr;
+                        var nc = col + dc;
+                        
+                        if (nr >= 0 && nr < game.rows && nc >= 0 && nc < game.cols) {
+                            if (game.grid[nr][nc] === color) {
+                                connections.push(i);
+                            }
+                        }
+                    }
+                    
+                    // Always draw a circle in the center if it's an endpoint
+                    if (isEndpoint) {
                         var dotElement = document.createElement('div');
                         dotElement.className = 'dot';
                         dotElement.style.backgroundColor = color;
                         cell.appendChild(dotElement);
+                    }
+                    
+                    // Draw lines/pipes for connections
+                    for (var i = 0; i < connections.length; i++) {
+                        var dir = connections[i];
+                        var line = document.createElement('div');
+                        line.className = 'line';
+                        line.style.backgroundColor = color;
+                        line.style.position = 'absolute';
+                        
+                        if (dir === 0) { // up
+                            line.style.width = lineWidth + 'px';
+                            line.style.height = '50%';
+                            line.style.left = '50%';
+                            line.style.top = '0';
+                            line.style.transform = 'translateX(-50%)';
+                        } else if (dir === 1) { // down
+                            line.style.width = lineWidth + 'px';
+                            line.style.height = '50%';
+                            line.style.left = '50%';
+                            line.style.bottom = '0';
+                            line.style.transform = 'translateX(-50%)';
+                        } else if (dir === 2) { // left
+                            line.style.height = lineWidth + 'px';
+                            line.style.width = '50%';
+                            line.style.top = '50%';
+                            line.style.left = '0';
+                            line.style.transform = 'translateY(-50%)';
+                        } else if (dir === 3) { // right
+                            line.style.height = lineWidth + 'px';
+                            line.style.width = '50%';
+                            line.style.top = '50%';
+                            line.style.right = '0';
+                            line.style.transform = 'translateY(-50%)';
+                        }
+                        
+                        cell.appendChild(line);
+                    }
+                    
+                    // Draw center junction if not an endpoint
+                    if (!isEndpoint && connections.length > 0) {
+                        var junction = document.createElement('div');
+                        junction.className = 'junction';
+                        junction.style.backgroundColor = color;
+                        junction.style.width = lineWidth + 'px';
+                        junction.style.height = lineWidth + 'px';
+                        junction.style.position = 'absolute';
+                        junction.style.left = '50%';
+                        junction.style.top = '50%';
+                        junction.style.transform = 'translate(-50%, -50%)';
+                        cell.appendChild(junction);
                     }
                 }
             }
@@ -321,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (game) {
                 // Create a copy for tracking player moves
                 playerGrid = game.copy();
-                renderer.render(playerGrid);
+                renderer.render(playerGrid, game);
                 console.log('Free Flow game initialized');
             } else {
                 console.error('Failed to generate starting board');
@@ -367,9 +447,26 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Only start drawing if we click on a colored cell
         if (cellColor !== null) {
+            // Clear all previous lines of this color (keep only the endpoints from starting board)
+            for (var row = 0; row < playerGrid.rows; row++) {
+                for (var col = 0; col < playerGrid.cols; col++) {
+                    if (playerGrid.grid[row][col] === cellColor) {
+                        // Check if this is an endpoint in the starting board
+                        if (!game.grid[row][col]) {
+                            // Not an endpoint, clear it
+                            playerGrid.grid[row][col] = null;
+                        }
+                    }
+                }
+            }
+            
             isDrawing = true;
             currentColor = cellColor;
             currentPath = [{ row: cell.row, col: cell.col }];
+            
+            // Re-render after clearing
+            renderer.render(playerGrid, game);
+            
             console.log('Started drawing with color:', currentColor);
         }
     });
@@ -400,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 playerGrid.grid[cell.row][cell.col] = currentColor;
                 
                 // Re-render
-                renderer.render(playerGrid);
+                renderer.render(playerGrid, game);
             }
         }
     });
