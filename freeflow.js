@@ -308,12 +308,20 @@ document.addEventListener('DOMContentLoaded', () => {
     var game = null;
     var renderer = new FreeFlowRenderer(gameElement, gridSize, gridSize);
     
+    // Drawing state
+    var isDrawing = false;
+    var currentColor = null;
+    var currentPath = [];
+    var playerGrid = null; // Track player's drawn lines
+    
     var initializeGame = function() {
         var filledBoard = FreeFlowGame.getFilledBoard(gridSize, gridSize, numColors);
         if (filledBoard) {
             game = FreeFlowGame.getStartingBoard(filledBoard);
             if (game) {
-                renderer.render(game);
+                // Create a copy for tracking player moves
+                playerGrid = game.copy();
+                renderer.render(playerGrid);
                 console.log('Free Flow game initialized');
             } else {
                 console.error('Failed to generate starting board');
@@ -322,6 +330,100 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to generate filled board');
         }
     };
+    
+    // Get cell from coordinates
+    var getCellFromEvent = function(event) {
+        var target = event.target;
+        
+        // If we clicked on a dot, get its parent cell
+        if (target.classList.contains('dot')) {
+            target = target.parentElement;
+        }
+        
+        if (target.classList.contains('cell')) {
+            var row = parseInt(target.dataset.row);
+            var col = parseInt(target.dataset.col);
+            return { row: row, col: col, element: target };
+        }
+        
+        return null;
+    };
+    
+    // Check if two cells are adjacent
+    var areAdjacent = function(cell1, cell2) {
+        var rowDiff = Math.abs(cell1.row - cell2.row);
+        var colDiff = Math.abs(cell1.col - cell2.col);
+        return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
+    };
+    
+    // Mouse down - start drawing
+    gameElement.addEventListener('mousedown', (event) => {
+        var cell = getCellFromEvent(event);
+        if (!cell || !playerGrid) {
+            return;
+        }
+        
+        var cellColor = playerGrid.grid[cell.row][cell.col];
+        
+        // Only start drawing if we click on a colored cell
+        if (cellColor !== null) {
+            isDrawing = true;
+            currentColor = cellColor;
+            currentPath = [{ row: cell.row, col: cell.col }];
+            console.log('Started drawing with color:', currentColor);
+        }
+    });
+    
+    // Mouse move - continue drawing
+    gameElement.addEventListener('mousemove', (event) => {
+        if (!isDrawing || !playerGrid) {
+            return;
+        }
+        
+        var cell = getCellFromEvent(event);
+        if (!cell) {
+            return;
+        }
+        
+        var lastCell = currentPath[currentPath.length - 1];
+        
+        // Check if this is a new cell and adjacent to the last cell
+        if ((cell.row !== lastCell.row || cell.col !== lastCell.col) && areAdjacent(cell, lastCell)) {
+            var cellColor = playerGrid.grid[cell.row][cell.col];
+            
+            // Can draw on empty cells or cells with the same color
+            if (cellColor === null || cellColor === currentColor) {
+                // Add to path
+                currentPath.push({ row: cell.row, col: cell.col });
+                
+                // Update player grid
+                playerGrid.grid[cell.row][cell.col] = currentColor;
+                
+                // Re-render
+                renderer.render(playerGrid);
+            }
+        }
+    });
+    
+    // Mouse up - stop drawing
+    gameElement.addEventListener('mouseup', () => {
+        if (isDrawing) {
+            console.log('Stopped drawing. Path length:', currentPath.length);
+            isDrawing = false;
+            currentColor = null;
+            currentPath = [];
+        }
+    });
+    
+    // Mouse leave - stop drawing if mouse leaves game area
+    gameElement.addEventListener('mouseleave', () => {
+        if (isDrawing) {
+            console.log('Mouse left game area, stopped drawing');
+            isDrawing = false;
+            currentColor = null;
+            currentPath = [];
+        }
+    });
     
     // Initial render
     initializeGame();
