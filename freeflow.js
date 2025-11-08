@@ -377,6 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
     var gameElement = document.getElementById('game');
     var newGameButton = document.getElementById('newGameButton');
     var newGameButton2 = document.getElementById('newGameButton2');
+    var clearBoardButton = document.getElementById('clearBoardButton');
+    var showSolutionButton = document.getElementById('showSolutionButton');
     var gameOverOverlay = document.getElementById('gameOverOverlay');
     var debugInfo = document.getElementById('debugInfo');
     
@@ -388,6 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var gridSize = 7;
     var numColors = 6;
     var game = null;
+    var filledBoard = null; // Store the solution
     var renderer = new FreeFlowRenderer(gameElement, gridSize, gridSize);
     
     // Drawing state
@@ -399,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var drawThrottleMs = 16; // ~60fps
     
     var initializeGame = function() {
-        var filledBoard = FreeFlowGame.getFilledBoard(gridSize, gridSize, numColors);
+        filledBoard = FreeFlowGame.getFilledBoard(gridSize, gridSize, numColors);
         if (filledBoard) {
             game = FreeFlowGame.getStartingBoard(filledBoard);
             if (game) {
@@ -412,6 +415,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             console.error('Failed to generate filled board');
+        }
+    };
+    
+    var clearBoard = function() {
+        if (game) {
+            playerGrid = game.copy();
+            renderer.render(playerGrid, game);
+            console.log('Board cleared');
+        }
+    };
+    
+    var showSolution = function() {
+        if (filledBoard) {
+            playerGrid = filledBoard.copy();
+            renderer.render(playerGrid, game);
+            console.log('Showing solution');
+            
+            // Check win to show overlay
+            if (checkWin()) {
+                if (gameOverOverlay) {
+                    gameOverOverlay.style.display = 'flex';
+                }
+            }
         }
     };
     
@@ -773,6 +799,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameOverOverlay.style.display = 'none';
             }
             initializeGame();
+        });
+    }
+    
+    if (clearBoardButton) {
+        clearBoardButton.addEventListener('click', () => {
+            if (gameOverOverlay) {
+                gameOverOverlay.style.display = 'none';
+            }
+            clearBoard();
+        });
+    }
+    
+    if (showSolutionButton) {
+        showSolutionButton.addEventListener('click', () => {
+            showSolution();
         });
     }
     
