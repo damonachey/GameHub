@@ -376,6 +376,8 @@ class FreeFlowRenderer {
 document.addEventListener('DOMContentLoaded', () => {
     var gameElement = document.getElementById('game');
     var newGameButton = document.getElementById('newGameButton');
+    var newGameButton2 = document.getElementById('newGameButton2');
+    var gameOverOverlay = document.getElementById('gameOverOverlay');
     var debugInfo = document.getElementById('debugInfo');
     
     if (!gameElement) {
@@ -502,6 +504,82 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Check if puzzle is solved
+    var checkWin = function() {
+        // Check 1: All squares must be filled
+        for (var row = 0; row < playerGrid.rows; row++) {
+            for (var col = 0; col < playerGrid.cols; col++) {
+                if (playerGrid.grid[row][col] === null) {
+                    return false;
+                }
+            }
+        }
+        
+        // Check 2: All dots must be connected to their matching color dot
+        // Get all endpoint pairs from the starting board
+        var colorEndpoints = {};
+        
+        for (var row = 0; row < game.rows; row++) {
+            for (var col = 0; col < game.cols; col++) {
+                var color = game.grid[row][col];
+                if (color !== null) {
+                    if (!colorEndpoints[color]) {
+                        colorEndpoints[color] = [];
+                    }
+                    colorEndpoints[color].push({ row: row, col: col });
+                }
+            }
+        }
+        
+        // Check each color has exactly 2 endpoints and they are connected
+        for (var color in colorEndpoints) {
+            var endpoints = colorEndpoints[color];
+            
+            if (endpoints.length !== 2) {
+                return false;
+            }
+            
+            // BFS to check if the two endpoints are connected through same color
+            var start = endpoints[0];
+            var end = endpoints[1];
+            var visited = {};
+            var queue = [start];
+            visited[start.row + ',' + start.col] = true;
+            var found = false;
+            
+            while (queue.length > 0) {
+                var current = queue.shift();
+                
+                if (current.row === end.row && current.col === end.col) {
+                    found = true;
+                    break;
+                }
+                
+                // Check adjacent cells
+                var directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                for (var i = 0; i < directions.length; i++) {
+                    var dr = directions[i][0];
+                    var dc = directions[i][1];
+                    var nr = current.row + dr;
+                    var nc = current.col + dc;
+                    var key = nr + ',' + nc;
+                    
+                    if (nr >= 0 && nr < playerGrid.rows && nc >= 0 && nc < playerGrid.cols &&
+                        !visited[key] && playerGrid.grid[nr][nc] === color) {
+                        visited[key] = true;
+                        queue.push({ row: nr, col: nc });
+                    }
+                }
+            }
+            
+            if (!found) {
+                return false;
+            }
+        }
+        
+        return true;
+    };
+    
     // Mouse up - stop drawing
     gameElement.addEventListener('mouseup', () => {
         if (isDrawing) {
@@ -509,6 +587,14 @@ document.addEventListener('DOMContentLoaded', () => {
             isDrawing = false;
             currentColor = null;
             currentPath = [];
+            
+            // Check if puzzle is solved
+            if (checkWin()) {
+                console.log('Puzzle solved!');
+                if (gameOverOverlay) {
+                    gameOverOverlay.style.display = 'flex';
+                }
+            }
         }
     });
     
@@ -525,10 +611,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial render
     initializeGame();
     
-    // New Game button handler
+    // New Game button handlers
     if (newGameButton) {
         newGameButton.addEventListener('click', () => {
+            if (gameOverOverlay) {
+                gameOverOverlay.style.display = 'none';
+            }
             initializeGame();
+        });
+    }
+    
+    if (newGameButton2) {
+        newGameButton2.addEventListener('click', () => {
+            if (gameOverOverlay) {
+                gameOverOverlay.style.display = 'none';
+            }
+            initializeGame();
+        });
+    }
+    
+    // Close overlay when clicking outside the content
+    if (gameOverOverlay) {
+        gameOverOverlay.addEventListener('click', (event) => {
+            if (event.target === gameOverOverlay) {
+                gameOverOverlay.style.display = 'none';
+            }
         });
     }
 });
