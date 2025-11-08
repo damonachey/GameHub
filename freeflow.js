@@ -1,4 +1,4 @@
-// Free Flow Game - 6x6 Grid with colored dot pairs
+// Free Flow Game - Grid with colored dot pairs
 
 class FreeFlowGame {
     constructor(rows, cols) {
@@ -181,14 +181,14 @@ class FreeFlowGame {
                 // Check that each color appears at least 3 times
                 var colorCounts = currentBoard.getColorCounts();
                 var allColorsValid = true;
-                
+
                 for (var color in colorCounts) {
                     if (colorCounts[color] < 3) {
                         allColorsValid = false;
                         break;
                     }
                 }
-                
+
                 if (allColorsValid) {
                     var endTime = performance.now();
                     var elapsedMs = (endTime - startTime).toFixed(2);
@@ -247,34 +247,34 @@ class FreeFlowRenderer {
         this.cells = [];
         this.initializeGrid();
     }
-    
+
     initializeGrid() {
         this.gameElement.innerHTML = '';
         this.cells = [];
-        
+
         for (var row = 0; row < this.rows; row++) {
             for (var col = 0; col < this.cols; col++) {
                 var cell = document.createElement('div');
                 cell.className = 'cell';
                 cell.dataset.row = row;
                 cell.dataset.col = col;
-                
+
                 this.gameElement.appendChild(cell);
                 this.cells.push(cell);
             }
         }
     }
-    
+
     render(game, startingBoard) {
         // Clear all cells
         this.cells.forEach(cell => {
             cell.innerHTML = '';
             cell.style.backgroundColor = '';
         });
-        
+
         var directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // up, down, left, right
         var lineWidth = 15; // Half of dot diameter
-        
+
         // Render grid
         for (var row = 0; row < game.rows; row++) {
             for (var col = 0; col < game.cols; col++) {
@@ -282,17 +282,17 @@ class FreeFlowRenderer {
                 if (color !== null) {
                     var cellIndex = row * this.cols + col;
                     var cell = this.cells[cellIndex];
-                    
+
                     if (!cell) {
                         continue;
                     }
-                    
+
                     // Check if this is an endpoint (from starting board)
                     var isEndpoint = false;
                     if (startingBoard && startingBoard.grid[row][col] === color) {
                         isEndpoint = true;
                     }
-                    
+
                     // Count connections to same-colored neighbors
                     var connections = [];
                     for (var i = 0; i < directions.length; i++) {
@@ -300,14 +300,14 @@ class FreeFlowRenderer {
                         var dc = directions[i][1];
                         var nr = row + dr;
                         var nc = col + dc;
-                        
+
                         if (nr >= 0 && nr < game.rows && nc >= 0 && nc < game.cols) {
                             if (game.grid[nr][nc] === color) {
                                 connections.push(i);
                             }
                         }
                     }
-                    
+
                     // Always draw a circle in the center if it's an endpoint
                     if (isEndpoint) {
                         var dotElement = document.createElement('div');
@@ -315,7 +315,7 @@ class FreeFlowRenderer {
                         dotElement.style.backgroundColor = color;
                         cell.appendChild(dotElement);
                     }
-                    
+
                     // Draw lines/pipes for connections
                     for (var i = 0; i < connections.length; i++) {
                         var dir = connections[i];
@@ -323,7 +323,7 @@ class FreeFlowRenderer {
                         line.className = 'line';
                         line.style.backgroundColor = color;
                         line.style.position = 'absolute';
-                        
+
                         if (dir === 0) { // up
                             line.style.width = lineWidth + 'px';
                             line.style.height = '50%';
@@ -349,10 +349,10 @@ class FreeFlowRenderer {
                             line.style.right = '0';
                             line.style.transform = 'translateY(-50%)';
                         }
-                        
+
                         cell.appendChild(line);
                     }
-                    
+
                     // Draw center junction if not an endpoint
                     if (!isEndpoint && connections.length > 0) {
                         var junction = document.createElement('div');
@@ -381,18 +381,18 @@ document.addEventListener('DOMContentLoaded', () => {
     var showSolutionButton = document.getElementById('showSolutionButton');
     var gameOverOverlay = document.getElementById('gameOverOverlay');
     var debugInfo = document.getElementById('debugInfo');
-    
+
     if (!gameElement) {
         console.error('Game element not found');
         return;
     }
-    
+
     var gridSize = 7;
     var numColors = 6;
     var game = null;
     var filledBoard = null; // Store the solution
     var renderer = new FreeFlowRenderer(gameElement, gridSize, gridSize);
-    
+
     // Drawing state
     var isDrawing = false;
     var currentColor = null;
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var playerGrid = null; // Track player's drawn lines
     var lastDrawTime = 0;
     var drawThrottleMs = 16; // ~60fps
-    
+
     var initializeGame = function() {
         filledBoard = FreeFlowGame.getFilledBoard(gridSize, gridSize, numColors);
         if (filledBoard) {
@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to generate filled board');
         }
     };
-    
+
     var clearBoard = function() {
         if (game) {
             playerGrid = game.copy();
@@ -425,13 +425,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Board cleared');
         }
     };
-    
+
     var showSolution = function() {
         if (filledBoard) {
             playerGrid = filledBoard.copy();
             renderer.render(playerGrid, game);
             console.log('Showing solution');
-            
+
             // Check win to show overlay
             if (checkWin()) {
                 if (gameOverOverlay) {
@@ -440,11 +440,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-    
+
     // Get cell from coordinates
     var getCellFromEvent = function(event) {
         var clientX, clientY;
-        
+
         // Get coordinates from event
         if (event.type.startsWith('touch')) {
             // Prevent multi-touch
@@ -458,58 +458,58 @@ document.addEventListener('DOMContentLoaded', () => {
             clientX = event.clientX;
             clientY = event.clientY;
         }
-        
+
         if (!gameElement || !renderer.cells || renderer.cells.length === 0) {
             return null;
         }
-        
+
         // Calculate which cell based on grid position (more reliable than elementFromPoint)
         var rect = gameElement.getBoundingClientRect();
         var x = clientX - rect.left;
         var y = clientY - rect.top;
-        
+
         // Account for padding on the game element
         var gridStyle = window.getComputedStyle(gameElement);
         var paddingLeft = parseInt(gridStyle.paddingLeft) || 0;
         var paddingTop = parseInt(gridStyle.paddingTop) || 0;
         x -= paddingLeft;
         y -= paddingTop;
-        
+
         // Dynamically calculate cell size from actual rendered cell
         var firstCell = renderer.cells[0];
         var cellRect = firstCell.getBoundingClientRect();
         var cellWidth = cellRect.width;
         var cellHeight = cellRect.height;
-        
+
         // Get gap size from grid
         var gap = parseInt(gridStyle.gap) || 1;
-        
+
         // The grid has: cell + gap + cell + gap + cell...
         // So each "unit" is cellWidth + gap
         var unitSize = cellWidth + gap;
         var col = Math.floor(x / unitSize);
         var row = Math.floor(y / unitSize);
-        
+
         // For touch events, be more forgiving - allow touches in the gap to select the nearest cell
         var isTouchEvent = event.type.startsWith('touch');
-        
+
         if (!isTouchEvent) {
             // For mouse, validate that we're actually inside a cell (not in the gap)
             var cellX = x - (col * unitSize);
             var cellY = y - (row * unitSize);
-            
+
             // If we're in the gap area, return null
             if (cellX >= cellWidth || cellY >= cellHeight) {
                 return null;
             }
         }
-        
+
         // Clamp row/col to valid range for touch events
         if (isTouchEvent) {
             col = Math.max(0, Math.min(gridSize - 1, col));
             row = Math.max(0, Math.min(gridSize - 1, row));
         }
-        
+
         if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
             var cellIndex = row * gridSize + col;
             var cellElement = renderer.cells[cellIndex];
@@ -517,42 +517,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 return { row: row, col: col, element: cellElement };
             }
         }
-        
+
         return null;
         return null;
     };
-    
+
     // Check if two cells are adjacent
     var areAdjacent = function(cell1, cell2) {
         var rowDiff = Math.abs(cell1.row - cell2.row);
         var colDiff = Math.abs(cell1.col - cell2.col);
         return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
     };
-    
+
     // Get all cells between two points (for interpolation)
     var getCellsBetween = function(start, end) {
         var cells = [];
         var rowDiff = end.row - start.row;
         var colDiff = end.col - start.col;
         var steps = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
-        
+
         if (steps === 0) {
             return cells;
         }
-        
+
         for (var i = 1; i <= steps; i++) {
             var row = start.row + Math.round((rowDiff * i) / steps);
             var col = start.col + Math.round((colDiff * i) / steps);
-            
+
             // Only add orthogonally adjacent cells
             if (cells.length === 0 || areAdjacent(cells[cells.length - 1], { row: row, col: col })) {
                 cells.push({ row: row, col: col });
             }
         }
-        
+
         return cells;
     };
-    
+
     // Start drawing handler
     var startDrawing = function(event) {
         event.preventDefault();
@@ -560,9 +560,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!cell || !playerGrid) {
             return;
         }
-        
+
         var cellColor = playerGrid.grid[cell.row][cell.col];
-        
+
         // Only start drawing if we click on a colored cell
         if (cellColor !== null) {
             // Clear all previous lines of this color (keep only the endpoints from starting board)
@@ -577,53 +577,53 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            
+
             isDrawing = true;
             currentColor = cellColor;
             currentPath = [{ row: cell.row, col: cell.col }];
-            
+
             // Re-render after clearing
             renderer.render(playerGrid, game);
-            
+
             console.log('Started drawing with color:', currentColor);
         }
     };
-    
+
     // Mouse down - start drawing
     gameElement.addEventListener('mousedown', startDrawing);
-    
+
     // Touch start - start drawing
     gameElement.addEventListener('touchstart', startDrawing, { passive: false });
-    
+
     // Continue drawing handler
     var continueDrawing = function(event) {
         event.preventDefault();
         if (!isDrawing || !playerGrid) {
             return;
         }
-        
+
         // Throttle drawing for performance
         var now = Date.now();
         if (now - lastDrawTime < drawThrottleMs) {
             return;
         }
         lastDrawTime = now;
-        
+
         var cell = getCellFromEvent(event);
         if (!cell) {
             return;
         }
-        
+
         var lastCell = currentPath[currentPath.length - 1];
-        
+
         // Check if this is a new cell
         if (cell.row === lastCell.row && cell.col === lastCell.col) {
             return;
         }
-        
+
         // Get all cells between last cell and current cell (interpolation)
         var cellsToFill = [];
-        
+
         if (areAdjacent(cell, lastCell)) {
             // Adjacent - just add the cell
             cellsToFill = [cell];
@@ -631,39 +631,104 @@ document.addEventListener('DOMContentLoaded', () => {
             // Not adjacent - interpolate to fill gaps from fast movement
             cellsToFill = getCellsBetween(lastCell, cell);
         }
-        
+
         // Process each cell in the interpolated path
         var needsRender = false;
         for (var i = 0; i < cellsToFill.length; i++) {
             var cellToFill = cellsToFill[i];
             var cellColor = playerGrid.grid[cellToFill.row][cellToFill.col];
-            
-            // Can draw on empty cells or cells with the same color
-            if (cellColor === null || cellColor === currentColor) {
-                // Add to path
-                currentPath.push({ row: cellToFill.row, col: cellToFill.col });
-                
-                // Update player grid
-                playerGrid.grid[cellToFill.row][cellToFill.col] = currentColor;
-                needsRender = true;
+
+            // Check if this is an endpoint from the starting board
+            var isEndpoint = game.grid[cellToFill.row][cellToFill.col] !== null;
+
+            // Can only draw on empty cells or endpoints of matching color
+            if (cellColor === null) {
+                // Validate the move
+                var lastPathCell = currentPath[currentPath.length - 1];
+                var isValidMove = true;
+
+                // Rule 1: Source cell can't already have 2+ same-color neighbors
+                var directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                var sourceNeighborCount = 0;
+                for (var j = 0; j < directions.length; j++) {
+                    var dr = directions[j][0];
+                    var dc = directions[j][1];
+                    var nr = lastPathCell.row + dr;
+                    var nc = lastPathCell.col + dc;
+                    if (nr >= 0 && nr < playerGrid.rows && nc >= 0 && nc < playerGrid.cols) {
+                        if (playerGrid.grid[nr][nc] === currentColor) {
+                            sourceNeighborCount++;
+                        }
+                    }
+                }
+                if (sourceNeighborCount >= 2) {
+                    isValidMove = false;
+                }
+
+                // Rule 2: Target cell can't be adjacent to same color (except source and endpoints)
+                if (isValidMove) {
+                    for (var j = 0; j < directions.length; j++) {
+                        var dr = directions[j][0];
+                        var dc = directions[j][1];
+                        var checkRow = cellToFill.row + dr;
+                        var checkCol = cellToFill.col + dc;
+
+                        // Skip the source cell
+                        if (checkRow === lastPathCell.row && checkCol === lastPathCell.col) {
+                            continue;
+                        }
+
+                        if (checkRow >= 0 && checkRow < playerGrid.rows && checkCol >= 0 && checkCol < playerGrid.cols) {
+                            if (playerGrid.grid[checkRow][checkCol] === currentColor) {
+                                // Allow if the adjacent cell is an endpoint
+                                var isAdjacentEndpoint = game.grid[checkRow][checkCol] !== null;
+                                if (!isAdjacentEndpoint) {
+                                    isValidMove = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (isValidMove) {
+                    // Add to path
+                    currentPath.push({ row: cellToFill.row, col: cellToFill.col });
+
+                    // Update player grid
+                    playerGrid.grid[cellToFill.row][cellToFill.col] = currentColor;
+                    needsRender = true;
+                } else {
+                    // Invalid move - stop drawing
+                    break;
+                }
+            } else if (cellColor === currentColor) {
+                // Allow connecting to matching endpoint or backtracking over same color
+                if (isEndpoint) {
+                    // Successfully connected to the endpoint - add to path and continue
+                    currentPath.push({ row: cellToFill.row, col: cellToFill.col });
+                    needsRender = true;
+                }
+                // For non-endpoints with same color, just continue (backtracking)
+                continue;
             } else {
                 // Hit a different color - stop drawing
                 break;
             }
         }
-        
+
         // Re-render only if we made changes
         if (needsRender) {
             renderer.render(playerGrid, game);
         }
     };
-    
+
     // Mouse move - continue drawing
     gameElement.addEventListener('mousemove', continueDrawing);
-    
+
     // Touch move - continue drawing
     gameElement.addEventListener('touchmove', continueDrawing, { passive: false });
-    
+
     // Check if puzzle is solved
     var checkWin = function() {
         // Check 1: All squares must be filled
@@ -674,11 +739,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        
+
         // Check 2: All dots must be connected to their matching color dot
         // Get all endpoint pairs from the starting board
         var colorEndpoints = {};
-        
+
         for (var row = 0; row < game.rows; row++) {
             for (var col = 0; col < game.cols; col++) {
                 var color = game.grid[row][col];
@@ -690,15 +755,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        
+
         // Check each color has exactly 2 endpoints and they are connected
         for (var color in colorEndpoints) {
             var endpoints = colorEndpoints[color];
-            
+
             if (endpoints.length !== 2) {
                 return false;
             }
-            
+
             // BFS to check if the two endpoints are connected through same color
             var start = endpoints[0];
             var end = endpoints[1];
@@ -706,15 +771,15 @@ document.addEventListener('DOMContentLoaded', () => {
             var queue = [start];
             visited[start.row + ',' + start.col] = true;
             var found = false;
-            
+
             while (queue.length > 0) {
                 var current = queue.shift();
-                
+
                 if (current.row === end.row && current.col === end.col) {
                     found = true;
                     break;
                 }
-                
+
                 // Check adjacent cells
                 var directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
                 for (var i = 0; i < directions.length; i++) {
@@ -723,7 +788,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     var nr = current.row + dr;
                     var nc = current.col + dc;
                     var key = nr + ',' + nc;
-                    
+
                     if (nr >= 0 && nr < playerGrid.rows && nc >= 0 && nc < playerGrid.cols &&
                         !visited[key] && playerGrid.grid[nr][nc] === color) {
                         visited[key] = true;
@@ -731,15 +796,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-            
+
             if (!found) {
                 return false;
             }
         }
-        
+
         return true;
     };
-    
+
     // Stop drawing handler
     var stopDrawing = function(event) {
         console.log('Stop drawing called, event type:', event ? event.type : 'unknown');
@@ -747,7 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isDrawing = false;
             currentColor = null;
             currentPath = [];
-            
+
             console.log('Checking for win...');
             // Check if puzzle is solved
             if (checkWin()) {
@@ -760,16 +825,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-    
+
     // Mouse up - stop drawing (on document to catch releases outside game area)
     document.addEventListener('mouseup', stopDrawing);
-    
+
     // Touch end - stop drawing (on document to catch releases outside game area)
     document.addEventListener('touchend', stopDrawing);
-    
+
     // Touch cancel - stop drawing
     document.addEventListener('touchcancel', stopDrawing);
-    
+
     // Mouse leave - stop drawing if mouse leaves game area
     gameElement.addEventListener('mouseleave', () => {
         if (isDrawing) {
@@ -779,10 +844,10 @@ document.addEventListener('DOMContentLoaded', () => {
             currentPath = [];
         }
     });
-    
+
     // Initial render
     initializeGame();
-    
+
     // New Game button handlers
     if (newGameButton) {
         newGameButton.addEventListener('click', () => {
@@ -792,7 +857,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initializeGame();
         });
     }
-    
+
     if (newGameButton2) {
         newGameButton2.addEventListener('click', () => {
             if (gameOverOverlay) {
@@ -801,7 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initializeGame();
         });
     }
-    
+
     if (clearBoardButton) {
         clearBoardButton.addEventListener('click', () => {
             if (gameOverOverlay) {
@@ -810,13 +875,13 @@ document.addEventListener('DOMContentLoaded', () => {
             clearBoard();
         });
     }
-    
+
     if (showSolutionButton) {
         showSolutionButton.addEventListener('click', () => {
             showSolution();
         });
     }
-    
+
     // Close overlay when clicking outside the content
     if (gameOverOverlay) {
         gameOverOverlay.addEventListener('click', (event) => {
