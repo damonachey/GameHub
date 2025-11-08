@@ -395,6 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
     var currentColor = null;
     var currentPath = [];
     var playerGrid = null; // Track player's drawn lines
+    var lastDrawTime = 0;
+    var drawThrottleMs = 16; // ~60fps
     
     var initializeGame = function() {
         var filledBoard = FreeFlowGame.getFilledBoard(gridSize, gridSize, numColors);
@@ -415,19 +417,82 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Get cell from coordinates
     var getCellFromEvent = function(event) {
-        var target = event.target;
+        var clientX, clientY;
         
-        // If we clicked on a dot, get its parent cell
-        if (target.classList.contains('dot')) {
-            target = target.parentElement;
+        // Get coordinates from event
+        if (event.type.startsWith('touch')) {
+            // Prevent multi-touch
+            if (!event.touches || event.touches.length !== 1) {
+                return null;
+            }
+            var touch = event.touches[0];
+            clientX = touch.clientX;
+            clientY = touch.clientY;
+        } else {
+            clientX = event.clientX;
+            clientY = event.clientY;
         }
         
-        if (target.classList.contains('cell')) {
-            var row = parseInt(target.dataset.row);
-            var col = parseInt(target.dataset.col);
-            return { row: row, col: col, element: target };
+        if (!gameElement || !renderer.cells || renderer.cells.length === 0) {
+            return null;
         }
         
+        // Calculate which cell based on grid position (more reliable than elementFromPoint)
+        var rect = gameElement.getBoundingClientRect();
+        var x = clientX - rect.left;
+        var y = clientY - rect.top;
+        
+        // Account for padding on the game element
+        var gridStyle = window.getComputedStyle(gameElement);
+        var paddingLeft = parseInt(gridStyle.paddingLeft) || 0;
+        var paddingTop = parseInt(gridStyle.paddingTop) || 0;
+        x -= paddingLeft;
+        y -= paddingTop;
+        
+        // Dynamically calculate cell size from actual rendered cell
+        var firstCell = renderer.cells[0];
+        var cellRect = firstCell.getBoundingClientRect();
+        var cellWidth = cellRect.width;
+        var cellHeight = cellRect.height;
+        
+        // Get gap size from grid
+        var gap = parseInt(gridStyle.gap) || 1;
+        
+        // The grid has: cell + gap + cell + gap + cell...
+        // So each "unit" is cellWidth + gap
+        var unitSize = cellWidth + gap;
+        var col = Math.floor(x / unitSize);
+        var row = Math.floor(y / unitSize);
+        
+        // For touch events, be more forgiving - allow touches in the gap to select the nearest cell
+        var isTouchEvent = event.type.startsWith('touch');
+        
+        if (!isTouchEvent) {
+            // For mouse, validate that we're actually inside a cell (not in the gap)
+            var cellX = x - (col * unitSize);
+            var cellY = y - (row * unitSize);
+            
+            // If we're in the gap area, return null
+            if (cellX >= cellWidth || cellY >= cellHeight) {
+                return null;
+            }
+        }
+        
+        // Clamp row/col to valid range for touch events
+        if (isTouchEvent) {
+            col = Math.max(0, Math.min(gridSize - 1, col));
+            row = Math.max(0, Math.min(gridSize - 1, row));
+        }
+        
+        if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
+            var cellIndex = row * gridSize + col;
+            var cellElement = renderer.cells[cellIndex];
+            if (cellElement) {
+                return { row: row, col: col, element: cellElement };
+            }
+        }
+        
+        return null;
         return null;
     };
     
@@ -438,8 +503,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
     };
     
-    // Mouse down - start drawing
-    gameElement.addEventListener('mousedown', (event) => {
+    // Get all cells between two points (for interpolation)
+    var getCellsBetween = function(start, end) {
+        var cells = [];
+        var rowDiff = end.row - start.row;
+        var colDiff = end.col - start.col;
+        var steps = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
+        
+        if (steps === 0) {
+            return cells;
+        }
+        
+        for (var i = 1; i <= steps; i++) {
+            var row = start.row + Math.round((rowDiff * i) / steps);
+            var col = start.col + Math.round((colDiff * i) / steps);
+            
+            // Only add orthogonally adjacent cells
+            if (cells.length === 0 || areAdjacent(cells[cells.length - 1], { row: row, col: col })) {
+                cells.push({ row: row, col: col });
+            }
+        }
+        
+        return cells;
+    };
+    
+    // Start drawing handler
+    var startDrawing = function(event) {
+        event.preventDefault();
         var cell = getCellFromEvent(event);
         if (!cell || !playerGrid) {
             return;
@@ -471,13 +561,27 @@ document.addEventListener('DOMContentLoaded', () => {
             
             console.log('Started drawing with color:', currentColor);
         }
-    });
+    };
     
-    // Mouse move - continue drawing
-    gameElement.addEventListener('mousemove', (event) => {
+    // Mouse down - start drawing
+    gameElement.addEventListener('mousedown', startDrawing);
+    
+    // Touch start - start drawing
+    gameElement.addEventListener('touchstart', startDrawing, { passive: false });
+    
+    // Continue drawing handler
+    var continueDrawing = function(event) {
+        event.preventDefault();
         if (!isDrawing || !playerGrid) {
             return;
         }
+        
+        // Throttle drawing for performance
+        var now = Date.now();
+        if (now - lastDrawTime < drawThrottleMs) {
+            return;
+        }
+        lastDrawTime = now;
         
         var cell = getCellFromEvent(event);
         if (!cell) {
@@ -486,23 +590,53 @@ document.addEventListener('DOMContentLoaded', () => {
         
         var lastCell = currentPath[currentPath.length - 1];
         
-        // Check if this is a new cell and adjacent to the last cell
-        if ((cell.row !== lastCell.row || cell.col !== lastCell.col) && areAdjacent(cell, lastCell)) {
-            var cellColor = playerGrid.grid[cell.row][cell.col];
+        // Check if this is a new cell
+        if (cell.row === lastCell.row && cell.col === lastCell.col) {
+            return;
+        }
+        
+        // Get all cells between last cell and current cell (interpolation)
+        var cellsToFill = [];
+        
+        if (areAdjacent(cell, lastCell)) {
+            // Adjacent - just add the cell
+            cellsToFill = [cell];
+        } else {
+            // Not adjacent - interpolate to fill gaps from fast movement
+            cellsToFill = getCellsBetween(lastCell, cell);
+        }
+        
+        // Process each cell in the interpolated path
+        var needsRender = false;
+        for (var i = 0; i < cellsToFill.length; i++) {
+            var cellToFill = cellsToFill[i];
+            var cellColor = playerGrid.grid[cellToFill.row][cellToFill.col];
             
             // Can draw on empty cells or cells with the same color
             if (cellColor === null || cellColor === currentColor) {
                 // Add to path
-                currentPath.push({ row: cell.row, col: cell.col });
+                currentPath.push({ row: cellToFill.row, col: cellToFill.col });
                 
                 // Update player grid
-                playerGrid.grid[cell.row][cell.col] = currentColor;
-                
-                // Re-render
-                renderer.render(playerGrid, game);
+                playerGrid.grid[cellToFill.row][cellToFill.col] = currentColor;
+                needsRender = true;
+            } else {
+                // Hit a different color - stop drawing
+                break;
             }
         }
-    });
+        
+        // Re-render only if we made changes
+        if (needsRender) {
+            renderer.render(playerGrid, game);
+        }
+    };
+    
+    // Mouse move - continue drawing
+    gameElement.addEventListener('mousemove', continueDrawing);
+    
+    // Touch move - continue drawing
+    gameElement.addEventListener('touchmove', continueDrawing, { passive: false });
     
     // Check if puzzle is solved
     var checkWin = function() {
@@ -580,23 +714,35 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     };
     
-    // Mouse up - stop drawing
-    gameElement.addEventListener('mouseup', () => {
+    // Stop drawing handler
+    var stopDrawing = function(event) {
+        console.log('Stop drawing called, event type:', event ? event.type : 'unknown');
         if (isDrawing) {
-            console.log('Stopped drawing. Path length:', currentPath.length);
             isDrawing = false;
             currentColor = null;
             currentPath = [];
             
+            console.log('Checking for win...');
             // Check if puzzle is solved
             if (checkWin()) {
                 console.log('Puzzle solved!');
                 if (gameOverOverlay) {
                     gameOverOverlay.style.display = 'flex';
                 }
+            } else {
+                console.log('Not solved yet');
             }
         }
-    });
+    };
+    
+    // Mouse up - stop drawing (on document to catch releases outside game area)
+    document.addEventListener('mouseup', stopDrawing);
+    
+    // Touch end - stop drawing (on document to catch releases outside game area)
+    document.addEventListener('touchend', stopDrawing);
+    
+    // Touch cancel - stop drawing
+    document.addEventListener('touchcancel', stopDrawing);
     
     // Mouse leave - stop drawing if mouse leaves game area
     gameElement.addEventListener('mouseleave', () => {

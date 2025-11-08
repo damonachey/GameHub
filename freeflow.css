@@ -50,6 +50,15 @@
     transform: translate(-50%, -50%);
     border: 2px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
+
+.line {
+    pointer-events: none;
+}
+
+.junction {
+    pointer-events: none;
 }
 
 .game-buttons {
