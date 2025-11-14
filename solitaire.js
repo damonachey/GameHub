@@ -153,6 +153,12 @@ class SolitaireGame {
                 return false;
             }
             cards = sourceArray.slice(cardIndex);
+        } else if (sourceType === 'foundation') {
+            sourceArray = this.foundations[sourceIndex];
+            if (sourceArray.length === 0 || cardIndex !== sourceArray.length - 1) {
+                return false;
+            }
+            cards = [sourceArray[cardIndex]];
         } else {
             return false;
         }
@@ -358,7 +364,11 @@ class SolitaireController {
         this.game = new SolitaireGame();
         this.renderer = new SolitaireRenderer();
         this.selectedCard = null;
-        this.draggedCards = [];
+        this.draggedCard = null;
+        this.draggedCardClone = null;
+        this.dragStartX = 0;
+        this.dragStartY = 0;
+        this.isDragging = false;
         this.gameOverOverlay = document.getElementById('gameOverOverlay');
         this.newGameButton = document.getElementById('newGameButton');
         this.newGameButton2 = document.getElementById('newGameButton2');
@@ -415,6 +425,11 @@ class SolitaireController {
     }
     
     handleClick(e) {
+        if (this.isDragging) {
+            this.isDragging = false;
+            return;
+        }
+        
         var target = e.target.closest('.card, .pile');
         
         if (!target) {
@@ -492,6 +507,7 @@ class SolitaireController {
             if (moved) {
                 this.clearSelection();
                 this.renderer.render(this.game);
+                this.checkAutoComplete();
                 this.checkWin();
             }
         }
@@ -505,33 +521,72 @@ class SolitaireController {
             return;
         }
         
-        this.draggedCards = [card];
-        card.classList.add('dragging');
+        this.draggedCard = card;
+        this.dragStartX = e.clientX;
+        this.dragStartY = e.clientY;
+        this.isDragging = false;
     }
     
     handleMouseMove(e) {
-        if (this.draggedCards.length === 0) {
+        if (!this.draggedCard) {
             return;
+        }
+        
+        var deltaX = e.clientX - this.dragStartX;
+        var deltaY = e.clientY - this.dragStartY;
+        var distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        
+        if (!this.isDragging && distance > 5) {
+            this.isDragging = true;
+            
+            var clone = this.draggedCard.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.left = this.draggedCard.getBoundingClientRect().left + 'px';
+            clone.style.top = this.draggedCard.getBoundingClientRect().top + 'px';
+            clone.style.width = this.draggedCard.offsetWidth + 'px';
+            clone.style.height = this.draggedCard.offsetHeight + 'px';
+            clone.style.zIndex = '1000';
+            clone.style.pointerEvents = 'none';
+            clone.style.opacity = '0.8';
+            clone.style.transition = 'none';
+            clone.classList.add('dragging');
+            document.body.appendChild(clone);
+            
+            this.draggedCardClone = clone;
+            this.draggedCard.style.opacity = '0.3';
+        }
+        
+        if (this.draggedCardClone) {
+            var rect = this.draggedCard.getBoundingClientRect();
+            this.draggedCardClone.style.left = (rect.left + deltaX) + 'px';
+            this.draggedCardClone.style.top = (rect.top + deltaY) + 'px';
         }
     }
     
     handleMouseUp(e) {
-        if (this.draggedCards.length === 0) {
+        if (!this.draggedCard) {
             return;
         }
         
-        var card = this.draggedCards[0];
-        card.classList.remove('dragging');
-        this.draggedCards = [];
+        if (this.draggedCardClone) {
+            document.body.removeChild(this.draggedCardClone);
+            this.draggedCardClone = null;
+        }
         
-        var target = document.elementFromPoint(e.clientX, e.clientY);
-        if (target) {
-            var pile = target.closest('.pile');
-            if (pile) {
-                this.selectedCard = card;
-                this.tryMoveSelectedCard(pile);
+        this.draggedCard.style.opacity = '';
+        
+        if (this.isDragging) {
+            var target = document.elementFromPoint(e.clientX, e.clientY);
+            if (target) {
+                var pile = target.closest('.pile');
+                if (pile) {
+                    this.selectedCard = this.draggedCard;
+                    this.tryMoveSelectedCard(pile);
+                }
             }
         }
+        
+        this.draggedCard = null;
     }
     
     handleDoubleClick(e) {
@@ -573,7 +628,29 @@ class SolitaireController {
         
         if (moved) {
             this.renderer.render(this.game);
+            this.checkAutoComplete();
             this.checkWin();
+        }
+    }
+    
+    checkAutoComplete() {
+        if (this.game.stock.length === 0 && this.game.waste.length === 0) {
+            var hasFaceDown = false;
+            for (var i = 0; i < 7; i++) {
+                for (var j = 0; j < this.game.tableau[i].length; j++) {
+                    if (!this.game.tableau[i][j].faceUp) {
+                        hasFaceDown = true;
+                        break;
+                    }
+                }
+                if (hasFaceDown) {
+                    break;
+                }
+            }
+            
+            if (!hasFaceDown) {
+                this.animatedAutoComplete();
+            }
         }
     }
     
@@ -589,6 +666,35 @@ class SolitaireController {
         if (won) {
             this.showSuccessOverlay();
         }
+    }
+    
+    animatedAutoComplete() {
+        var self = this;
+        var delay = 150;
+        
+        var tryMoveNext = function() {
+            var moved = false;
+            
+            for (var i = 0; i < 7; i++) {
+                if (self.game.tableau[i].length > 0) {
+                    var card = self.game.tableau[i][self.game.tableau[i].length - 1];
+                    if (card.faceUp && self.game.canMoveToFoundation(card, card.suit)) {
+                        self.game.moveToFoundation('tableau', i, self.game.tableau[i].length - 1);
+                        self.renderer.render(self.game);
+                        moved = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (moved) {
+                setTimeout(tryMoveNext, delay);
+            } else {
+                self.checkWin();
+            }
+        };
+        
+        tryMoveNext();
     }
     
     checkWin() {

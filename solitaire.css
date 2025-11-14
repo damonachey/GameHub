@@ -78,14 +78,13 @@
     -ms-user-select: none;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
 .card.dragging {
-    opacity: 0.5;
+    opacity: 0.8;
     cursor: grabbing;
+    pointer-events: none;
+    z-index: 1000;
+    position: fixed;
+    transform: none;
 }
 
 .card.selected {
@@ -104,11 +103,6 @@
         rgba(47, 79, 79, 0.1) 20px
     );
     cursor: default;
-}
-
-.card.face-down:hover {
-    transform: none;
-    box-shadow: none;
 }
 
 .card.face-down .card-top,
