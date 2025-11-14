@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Solitaire Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="solitaire.css">
+</head>
+<body>
+    <h1><a href="index.html">GAME HUB</a></h1>
+    <div class="section-header">Solitaire</div>
+
+    <div class="game-container">
+        <div id="game">
+            <div class="top-row">
+                <div class="stock-area">
+                    <div id="stock" class="pile stock"></div>
+                    <div id="waste" class="pile waste"></div>
+                </div>
+                <div class="foundation-area">
+                    <div id="foundation-0" class="pile foundation" data-suit="0"></div>
+                    <div id="foundation-1" class="pile foundation" data-suit="1"></div>
+                    <div id="foundation-2" class="pile foundation" data-suit="2"></div>
+                    <div id="foundation-3" class="pile foundation" data-suit="3"></div>
+                </div>
+            </div>
+            <div class="tableau-area">
+                <div id="tableau-0" class="pile tableau" data-column="0"></div>
+                <div id="tableau-1" class="pile tableau" data-column="1"></div>
+                <div id="tableau-2" class="pile tableau" data-column="2"></div>
+                <div id="tableau-3" class="pile tableau" data-column="3"></div>
+                <div id="tableau-4" class="pile tableau" data-column="4"></div>
+                <div id="tableau-5" class="pile tableau" data-column="5"></div>
+                <div id="tableau-6" class="pile tableau" data-column="6"></div>
+            </div>
+        </div>
+        
+        <div class="game-buttons">
+            <button id="newGameButton" class="game-button">New Game</button>
+        </div>
+        <div id="instructions">
+            <div class="desktop-controls">Click and drag cards to move them. Click the stock to draw cards. Build foundations from Ace to King by suit. Build tableau columns in descending order with alternating colors.</div>
+            <div class="mobile-controls">Tap cards to select, then tap destination. Tap stock to draw. Build foundations Ace to King by suit. Build tableau descending with alternating colors.</div>
+        </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameOverOverlay" class="game-over-overlay">
+        <div class="game-over-content">
+            <div class="game-over-title win">Winner</div>
+            <div id="finalScore" class="game-over-score">Congratulations! You won!</div>
+            <button id="newGameButton2" class="restart-button">Play Again</button>
+        </div>
+    </div>
+
+    <script src="solitaire.js"></script>
+</body>
+</html>

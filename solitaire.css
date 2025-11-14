@@ -1,0 +1,294 @@
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    touch-action: none;
+}
+
+#game {
+    width: 100%;
+    max-width: 800px;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    gap: 15px;
+}
+
+.stock-area {
+    display: flex;
+    gap: 15px;
+}
+
+.foundation-area {
+    display: flex;
+    gap: 15px;
+}
+
+.tableau-area {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.pile {
+    position: relative;
+    width: 80px;
+    min-height: 110px;
+    border-radius: 8px;
+    background-color: rgba(47, 79, 79, 0.2);
+    border: 2px dashed rgba(47, 79, 79, 0.3);
+}
+
+.pile.stock,
+.pile.waste,
+.pile.foundation {
+    height: 110px;
+}
+
+.pile.tableau {
+    min-height: 400px;
+}
+
+.card {
+    position: absolute;
+    width: 80px;
+    height: 110px;
+    background-color: white;
+    border: 2px solid #2f4f4f;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.card.selected {
+    border-color: #4a90e2;
+    border-width: 3px;
+    box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+}
+
+.card.face-down {
+    background-color: #b0c4de;
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(47, 79, 79, 0.1) 10px,
+        rgba(47, 79, 79, 0.1) 20px
+    );
+    cursor: default;
+}
+
+.card.face-down:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.card.face-down .card-top,
+.card.face-down .card-bottom,
+.card.face-down .card-center {
+    display: none;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-rank {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.card-suit {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.card-center {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+}
+
+.card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    transform: rotate(180deg);
+}
+
+.card.red {
+    color: #dc143c;
+}
+
+.card.black {
+    color: #2f4f4f;
+}
+
+.game-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+#instructions {
+    margin-top: 20px;
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.4;
+}
+
+.mobile-controls {
+    display: none;
+}
+
+.desktop-controls {
+    display: block;
+}
+
+.game-over-score {
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    body {
+        padding: 20px 10px;
+        overflow-x: hidden;
+        overscroll-behavior: none;
+    }
+
+    #game {
+        max-width: 100%;
+    }
+
+    .top-row {
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stock-area,
+    .foundation-area {
+        justify-content: center;
+    }
+
+    .tableau-area {
+        gap: 8px;
+        overflow-x: auto;
+    }
+
+    .pile {
+        width: 60px;
+    }
+
+    .pile.stock,
+    .pile.waste,
+    .pile.foundation {
+        height: 84px;
+    }
+
+    .pile.tableau {
+        min-height: 300px;
+    }
+
+    .card {
+        width: 60px;
+        height: 84px;
+        padding: 3px;
+    }
+
+    .card-rank {
+        font-size: 16px;
+    }
+
+    .card-suit {
+        font-size: 18px;
+    }
+
+    .card-center {
+        font-size: 28px;
+    }
+
+    #instructions {
+        font-size: 14px;
+        margin-top: 15px;
+    }
+    
+    .mobile-controls {
+        display: block;
+    }
+    
+    .desktop-controls {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .pile {
+        width: 50px;
+    }
+
+    .pile.stock,
+    .pile.waste,
+    .pile.foundation {
+        height: 70px;
+    }
+
+    .card {
+        width: 50px;
+        height: 70px;
+        padding: 2px;
+    }
+
+    .card-rank {
+        font-size: 14px;
+    }
+
+    .card-suit {
+        font-size: 16px;
+    }
+
+    .card-center {
+        font-size: 24px;
+    }
+
+    .tableau-area {
+        gap: 5px;
+    }
+}
