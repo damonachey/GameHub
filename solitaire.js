@@ -408,6 +408,10 @@ class SolitaireController {
         document.addEventListener('mouseup', function(e) {
             self.handleMouseUp(e);
         });
+        
+        document.addEventListener('dblclick', function(e) {
+            self.handleDoubleClick(e);
+        });
     }
     
     handleClick(e) {
@@ -527,6 +531,49 @@ class SolitaireController {
                 this.selectedCard = card;
                 this.tryMoveSelectedCard(pile);
             }
+        }
+    }
+    
+    handleDoubleClick(e) {
+        var cardEl = e.target.closest('.card');
+        if (!cardEl || cardEl.classList.contains('face-down') || cardEl.closest('#stock')) {
+            return;
+        }
+        
+        var sourceType = cardEl.getAttribute('data-pile-type');
+        var sourceIndex = parseInt(cardEl.getAttribute('data-pile-index'));
+        var cardIndex = parseInt(cardEl.getAttribute('data-card-index'));
+        var moved = false;
+        
+        // Try to move to its foundation first
+        var foundationIndex = null;
+        if (sourceType === 'waste') {
+            if (this.game.waste[cardIndex]) {
+                foundationIndex = this.game.waste[cardIndex].suit;
+            }
+        } else if (sourceType === 'tableau') {
+            if (this.game.tableau[sourceIndex] && this.game.tableau[sourceIndex][cardIndex]) {
+                foundationIndex = this.game.tableau[sourceIndex][cardIndex].suit;
+            }
+        }
+        
+        if (foundationIndex !== null) {
+            moved = this.game.moveCards(sourceType, sourceIndex, cardIndex, 'foundation', foundationIndex);
+        }
+        
+        // If not moved to foundation, try any tableau column
+        if (!moved) {
+            for (var i = 0; i < 7 && !moved; i++) {
+                if (sourceType === 'tableau' && i === sourceIndex) {
+                    continue;
+                }
+                moved = this.game.moveCards(sourceType, sourceIndex, cardIndex, 'tableau', i);
+            }
+        }
+        
+        if (moved) {
+            this.renderer.render(this.game);
+            this.checkWin();
         }
     }
     
